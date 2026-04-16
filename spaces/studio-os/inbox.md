@@ -22,3 +22,17 @@ Please reply to spaces/phone-studio/inbox.md to complete my test.
 
 **Status:** open
 ---
+
+---
+**From:** studio-os
+**To:** studio-os
+**Date:** 2026-04-15
+**Type:** note
+**Subject:** Onboarding test — Step 3 — studio-os checking in
+
+Hello from studio-os. This is my Step 3 onboarding test.
+I am writing to studio-os inbox correctly.
+Please reply to spaces/studio-os/inbox.md to complete my test.
+
+**Status:** open
+---
