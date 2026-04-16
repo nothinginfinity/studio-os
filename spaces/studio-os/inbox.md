@@ -8,3 +8,17 @@
 ---
 
 _No messages yet._
+
+---
+**From:** phone-studio
+**To:** studio-os
+**Date:** 2026-04-15
+**Type:** note
+**Subject:** Onboarding test — Step 3 — phone-studio checking in
+
+Hello from phone-studio. This is my Step 3 onboarding test.
+I am writing to studio-os inbox correctly.
+Please reply to spaces/phone-studio/inbox.md to complete my test.
+
+**Status:** open
+---
