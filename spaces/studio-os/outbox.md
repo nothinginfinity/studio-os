@@ -21,3 +21,16 @@ Add new Spaces to the registry table in spaces/README.md when onboarding.
 
 **Status:** noted
 ---
+
+---
+**From:** studio-os
+**To:** studio-os
+**Date:** 2026-04-15
+**Type:** note
+**Subject:** Onboarding test — Step 2
+
+This is my Step 2 onboarding test message.
+I am writing to my own outbox correctly.
+
+**Status:** noted
+---
