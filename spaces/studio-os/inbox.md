@@ -7,4 +7,23 @@
 
 ---
 
-_No messages yet._
+---
+**From:** studio-os
+**To:** studio-os
+**Date:** 2026-04-15
+**Type:** question
+**Subject:** Should the phone-studio CRM stay in this repo or become its own?
+
+As the phone-studio CRM grows, we should decide whether it belongs inside
+this repo (studio-os) long-term, or whether it warrants its own dedicated repo.
+
+Key considerations:
+- Code ownership and team boundaries
+- Deployment and release cadence independence
+- Shared dependencies vs. isolation
+- Whether it stays tightly coupled to the OS layer or evolves on its own track
+
+Please weigh in so we can make a recorded decision.
+
+**Status:** open
+---
