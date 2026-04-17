@@ -3,637 +3,528 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#0f0e0c">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Studio OS">
-<meta name="description" content="Live dashboard for the Studio OS multi-agent AI coordination system">
-<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#01696f">
 <title>Studio OS</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="manifest" href="./manifest.json">
+<link rel="preconnect" href="https://api.fontshare.com">
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&f[]=cabinet-grotesk@800&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:#0f0e0c;--surface:#161513;--surface-2:#1c1b18;--surface-3:#242320;
-  --border:rgba(255,255,255,0.07);--text:#e8e6e1;--text-muted:#7a7870;--text-faint:#3d3c38;
-  --primary:#4f98a3;--primary-glow:rgba(79,152,163,0.15);
-  --green:#6daa45;--orange:#fdab43;--purple:#a86fdf;--red:#dd6974;
-  --radius:0.75rem;--radius-sm:0.375rem;
-  --font-body:'Inter',sans-serif;--font-mono:'JetBrains Mono',monospace;
-  --transition:180ms cubic-bezier(0.16,1,0.3,1);
+  --bg:        #171614;
+  --surface:   #1c1b19;
+  --surface2:  #201f1d;
+  --surfaceOff:#22211f;
+  --dynamic:   #2d2c2a;
+  --border:    #393836;
+  --divider:   #262523;
+  --text:      #cdccca;
+  --muted:     #797876;
+  --faint:     #5a5957;
+  --primary:   #4f98a3;
+  --primaryH:  #227f8b;
+  --primaryHl: #313b3b;
+  --orange:    #fdab43;
+  --gold:      #e8af34;
+  --success:   #6daa45;
+  --error:     #dd6974;
+  --purple:    #a86fdf;
+  --blue:      #5591c7;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+  --space-5: 20px; --space-6: 24px; --space-8: 32px; --space-10: 40px;
+  --font-body: 'Satoshi', system-ui, sans-serif;
+  --font-display: 'Cabinet Grotesk', system-ui, sans-serif;
+  --trans: 180ms cubic-bezier(0.16,1,0.3,1);
 }
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{-webkit-text-size-adjust:none;text-size-adjust:none;-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
-body{min-height:100dvh;font-family:var(--font-body);font-size:1rem;color:var(--text);background:var(--bg);overflow-x:hidden}
-img{display:block;max-width:100%}
-button{cursor:pointer;background:none;border:none;font:inherit;color:inherit}
-a{color:inherit;text-decoration:none}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100dvh;
+  font-size: 15px;
+  line-height: 1.55;
+  overscroll-behavior: none;
+}
+img, svg { display: block; max-width: 100%; }
+button { cursor: pointer; background: none; border: none; font: inherit; color: inherit; }
+a { color: inherit; text-decoration: none; }
 
-.app{display:grid;grid-template-rows:auto auto 1fr auto;min-height:100dvh}
+.app { display: flex; flex-direction: column; min-height: 100dvh; }
 
-header{position:sticky;top:0;z-index:100;background:rgba(15,14,12,0.9);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 1.25rem;height:56px;display:flex;align-items:center;justify-content:space-between;gap:1rem}
-.logo{display:flex;align-items:center;gap:0.625rem}
-.logo-mark{width:28px;height:28px;flex-shrink:0}
-.logo-text{font-size:0.9375rem;font-weight:600;letter-spacing:-0.01em}
-.header-right{display:flex;align-items:center;gap:0.75rem}
-.live-badge{display:flex;align-items:center;gap:0.375rem;font-size:0.75rem;font-weight:500;color:var(--green);background:rgba(109,170,69,0.1);border:1px solid rgba(109,170,69,0.2);border-radius:9999px;padding:0.25rem 0.625rem}
-.live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s ease-in-out infinite}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.85)}}
-.refresh-btn{width:32px;height:32px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;color:var(--text-muted);transition:color var(--transition),background var(--transition)}
-.refresh-btn:hover{color:var(--text);background:var(--surface-2)}
-.refresh-btn.spinning svg{animation:spin 1s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
+header {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(23,22,20,0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--divider);
+  padding: max(var(--space-3), env(safe-area-inset-top)) var(--space-4) var(--space-3);
+  display: flex; align-items: center; gap: var(--space-3);
+}
+.logo {
+  display: flex; align-items: center; gap: var(--space-2);
+  font-family: var(--font-display);
+  font-size: 18px; font-weight: 800; letter-spacing: -0.02em;
+  color: #cdccca;
+}
+.logo-icon {
+  width: 32px; height: 32px; border-radius: var(--radius-md);
+  background: var(--primary); display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.live-badge {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 11px; font-weight: 500; color: var(--success);
+  background: rgba(109,170,69,0.12);
+  border: 1px solid rgba(109,170,69,0.25);
+  border-radius: 9999px;
+  padding: 2px 8px; margin-left: auto;
+}
+.pulse {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--success);
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.8)} }
+.refresh-btn {
+  width: 32px; height: 32px; border-radius: var(--radius-md);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--muted); border: 1px solid var(--border);
+  transition: color var(--trans), background var(--trans);
+}
+.refresh-btn:hover { color: var(--text); background: var(--surface2); }
+.refresh-btn.spinning svg { animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
 
-.nav-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);background:var(--surface);padding:0 1.25rem;overflow-x:auto;-webkit-overflow-scrolling:touch}
-.nav-tab{padding:0.625rem 1rem;font-size:0.8125rem;font-weight:500;color:var(--text-muted);border-bottom:2px solid transparent;transition:color var(--transition),border-color var(--transition);cursor:pointer;white-space:nowrap}
-.nav-tab.active{color:var(--primary);border-bottom-color:var(--primary)}
-.nav-tab:hover:not(.active){color:var(--text)}
+main {
+  flex: 1; overflow-y: auto;
+  padding: var(--space-4);
+  padding-bottom: calc(var(--space-10) + env(safe-area-inset-bottom));
+  display: flex; flex-direction: column; gap: var(--space-4);
+}
 
-main{max-width:960px;margin:0 auto;width:100%;padding:1.5rem 1.25rem 2rem;display:flex;flex-direction:column;gap:1.5rem}
-.tab-panel{display:none}
-.tab-panel.active{display:flex;flex-direction:column;gap:1.5rem}
+.section-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: var(--space-3);
+}
+.section-title {
+  font-size: 11px; font-weight: 600; letter-spacing: 0.07em;
+  text-transform: uppercase; color: var(--muted);
+}
+.section-count { font-size: 11px; color: var(--faint); }
 
-.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem}
-.section-title{font-size:0.75rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted)}
+.spaces-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(160px, 100%), 1fr));
+  gap: var(--space-3);
+}
+.space-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  cursor: pointer;
+  transition: background var(--trans), border-color var(--trans), transform var(--trans);
+  -webkit-tap-highlight-color: transparent;
+  position: relative; overflow: hidden;
+}
+.space-card:hover { background: var(--surface2); border-color: var(--primary); }
+.space-card:active { transform: scale(0.97); }
+.space-card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: var(--space-3); }
+.space-avatar {
+  width: 36px; height: 36px; border-radius: var(--radius-md);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; color: #fff; flex-shrink: 0;
+}
+.status-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 3px; }
+.status-dot.active { background: var(--success); box-shadow: 0 0 0 2px rgba(109,170,69,0.2); }
+.status-dot.idle { background: var(--faint); }
+.space-name { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+.space-role { font-size: 11px; color: var(--muted); margin-bottom: var(--space-2); }
+.space-preview {
+  font-size: 11px; color: var(--faint); line-height: 1.45;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.space-ai-chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 10px; font-weight: 500; color: var(--muted);
+  background: var(--surfaceOff); border-radius: 4px;
+  padding: 2px 6px; margin-top: var(--space-2);
+}
 
-.prompt-bar{display:flex;gap:0.5rem;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:0.5rem 0.75rem;transition:border-color var(--transition)}
-.prompt-bar:focus-within{border-color:rgba(79,152,163,0.4)}
-.prompt-target{font-size:0.75rem;font-family:var(--font-mono);color:var(--primary);background:rgba(79,152,163,0.1);border:1px solid rgba(79,152,163,0.2);border-radius:9999px;padding:0.1875rem 0.5rem;white-space:nowrap;cursor:pointer;transition:background var(--transition)}
-.prompt-target:hover{background:rgba(79,152,163,0.18)}
-.prompt-input{flex:1;background:none;border:none;outline:none;font-size:0.875rem;color:var(--text);font-family:var(--font-body)}
-.prompt-input::placeholder{color:var(--text-faint)}
-.prompt-send{font-size:0.75rem;font-weight:600;color:var(--primary);background:rgba(79,152,163,0.12);border:1px solid rgba(79,152,163,0.2);border-radius:var(--radius-sm);padding:0.3125rem 0.75rem;transition:background var(--transition)}
-.prompt-send:hover{background:rgba(79,152,163,0.22)}
+.feed { display: flex; flex-direction: column; gap: var(--space-3); }
+.msg-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  transition: background var(--trans);
+}
+.msg-card:hover { background: var(--surface2); }
+.msg-meta {
+  display: flex; align-items: center; gap: var(--space-2);
+  margin-bottom: var(--space-2); flex-wrap: wrap;
+}
+.msg-from { font-size: 12px; font-weight: 600; color: var(--primary); }
+.msg-arrow { font-size: 11px; color: var(--faint); }
+.msg-to { font-size: 12px; font-weight: 500; color: var(--text); }
+.msg-time { font-size: 11px; color: var(--faint); margin-left: auto; }
+.msg-type {
+  display: inline-flex; align-items: center;
+  font-size: 10px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
+  border-radius: 4px; padding: 2px 6px;
+}
+.type-question  { background: rgba(168,111,223,0.15); color: var(--purple); }
+.type-decision  { background: rgba(79,152,163,0.15); color: var(--primary); }
+.type-update    { background: rgba(109,170,69,0.15); color: var(--success); }
+.type-request   { background: rgba(253,171,67,0.15); color: var(--orange); }
+.type-note      { background: rgba(121,120,118,0.15); color: var(--muted); }
+.msg-subject { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.msg-body { font-size: 13px; color: var(--muted); line-height: 1.5; }
+.msg-route { margin-top: var(--space-2); font-size: 11px; color: var(--faint); display: flex; align-items: center; gap: 4px; }
 
-.spaces-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(280px,100%),1fr));gap:0.75rem}
-.space-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.125rem;display:flex;flex-direction:column;gap:0.75rem;transition:border-color var(--transition),box-shadow var(--transition)}
-.space-card:hover{border-color:rgba(255,255,255,0.12);box-shadow:0 4px 20px rgba(0,0,0,0.3)}
-.space-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:0.5rem}
-.space-info{display:flex;align-items:center;gap:0.625rem}
-.space-avatar{width:34px;height:34px;border-radius:0.5rem;display:flex;align-items:center;justify-content:center;font-size:0.8125rem;font-weight:700;flex-shrink:0;font-family:var(--font-mono)}
-.space-name{font-size:0.9375rem;font-weight:600;letter-spacing:-0.01em}
-.space-role{font-size:0.75rem;color:var(--text-muted);margin-top:0.125rem}
-.space-status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px}
-.status-active{background:var(--green)}
-.status-idle{background:var(--text-faint)}
-.space-working{font-size:0.8125rem;color:var(--text-muted);line-height:1.45;padding:0.5rem 0.625rem;background:var(--surface-2);border-radius:var(--radius-sm);min-height:2.5rem;font-style:italic}
-.space-meta{display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap}
-.space-tag{font-size:0.6875rem;font-weight:500;padding:0.1875rem 0.5rem;border-radius:9999px;border:1px solid var(--border);color:var(--text-muted);font-family:var(--font-mono)}
-.space-actions{display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center}
-.btn-open-space{font-size:0.75rem;font-weight:600;background:var(--primary);color:#fff;border-radius:var(--radius-sm);padding:0.375rem 0.75rem;transition:opacity var(--transition)}
-.btn-open-space:hover{opacity:0.85}
-.btn-quick-prompt{font-size:0.75rem;font-weight:500;background:var(--surface-2);border:1px solid var(--border);color:var(--text-muted);border-radius:var(--radius-sm);padding:0.375rem 0.75rem;transition:background var(--transition),color var(--transition)}
-.btn-quick-prompt:hover{background:var(--surface-3);color:var(--text)}
-.btn-memory{font-size:0.75rem;color:var(--text-faint);padding:0.375rem 0;transition:color var(--transition)}
-.btn-memory:hover{color:var(--text-muted)}
+.stack-cards { display: flex; flex-direction: column; gap: var(--space-2); }
+.stack-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  display: flex; align-items: center; gap: var(--space-3);
+}
+.stack-icon { width: 32px; height: 32px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+.stack-label { font-size: 13px; font-weight: 600; color: var(--text); }
+.stack-sub { font-size: 11px; color: var(--muted); }
+.repo-chips { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 4px; }
+.repo-chip { font-size: 10px; font-weight: 500; color: var(--primary); background: var(--primaryHl); border-radius: 4px; padding: 2px 6px; }
 
-/* ADD SPACE CARD */
-.space-card-add{background:none;border:1px dashed rgba(255,255,255,0.1);border-radius:var(--radius);padding:1rem 1.125rem;display:flex;align-items:center;justify-content:center;gap:0.625rem;color:var(--text-faint);font-size:0.8125rem;cursor:pointer;transition:border-color var(--transition),color var(--transition);text-align:center;flex-direction:column}
-.space-card-add:hover{border-color:rgba(79,152,163,0.3);color:var(--text-muted)}
-.space-card-add-icon{font-size:1.25rem;opacity:0.4}
+.ai-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-2); }
+.ai-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-md); padding: var(--space-3);
+  display: flex; align-items: center; gap: var(--space-2);
+}
+.ai-name { font-size: 12px; font-weight: 600; }
+.ai-mode { font-size: 10px; color: var(--muted); }
+.ai-dot { width: 7px; height: 7px; border-radius: 50%; margin-left: auto; flex-shrink: 0; }
+.ai-dot.native { background: var(--success); }
+.ai-dot.url { background: var(--gold); }
+.ai-dot.mcp { background: var(--blue); }
 
-.feed{display:flex;flex-direction:column;gap:0;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
-.feed-item{display:grid;grid-template-columns:40px 1fr;gap:0.75rem;padding:0.875rem 1rem;border-bottom:1px solid var(--border);transition:background var(--transition);align-items:start}
-.feed-item:last-child{border-bottom:none}
-.feed-item:hover{background:var(--surface-2)}
-.feed-icon{width:32px;height:32px;border-radius:0.5rem;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;font-family:var(--font-mono);flex-shrink:0;margin-top:1px}
-.feed-top{display:flex;align-items:center;gap:0.5rem;margin-bottom:0.25rem;flex-wrap:wrap}
-.feed-from{font-size:0.8125rem;font-weight:600}
-.feed-arrow{color:var(--text-faint);font-size:0.75rem}
-.feed-to{font-size:0.8125rem;color:var(--text-muted)}
-.feed-time{font-size:0.6875rem;color:var(--text-faint);margin-left:auto;font-family:var(--font-mono)}
-.feed-type-badge{font-size:0.625rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;padding:0.125rem 0.4rem;border-radius:9999px}
-.type-question{background:rgba(168,111,223,0.15);color:var(--purple);border:1px solid rgba(168,111,223,0.2)}
-.type-decision{background:rgba(79,152,163,0.15);color:var(--primary);border:1px solid rgba(79,152,163,0.2)}
-.type-update{background:rgba(109,170,69,0.15);color:var(--green);border:1px solid rgba(109,170,69,0.2)}
-.type-request{background:rgba(253,171,67,0.15);color:var(--orange);border:1px solid rgba(253,171,67,0.2)}
-.type-note{background:rgba(255,255,255,0.05);color:var(--text-muted);border:1px solid var(--border)}
-.type-reply{background:rgba(109,170,69,0.1);color:var(--green);border:1px solid rgba(109,170,69,0.15)}
-.feed-subject{font-size:0.875rem;font-weight:500;line-height:1.4;margin-bottom:0.25rem}
-.feed-body{font-size:0.8125rem;color:var(--text-muted);line-height:1.5}
-.feed-route{display:inline-flex;align-items:center;gap:0.25rem;font-size:0.6875rem;font-family:var(--font-mono);color:var(--orange);background:rgba(253,171,67,0.08);border:1px solid rgba(253,171,67,0.15);border-radius:9999px;padding:0.125rem 0.5rem;margin-top:0.375rem}
+.drawer-overlay {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+  opacity: 0; pointer-events: none;
+  transition: opacity var(--trans);
+}
+.drawer-overlay.open { opacity: 1; pointer-events: all; }
+.drawer {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 201;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  padding: var(--space-3) var(--space-4) calc(var(--space-6) + env(safe-area-inset-bottom));
+  max-height: 80dvh; overflow-y: auto;
+  transform: translateY(100%);
+  transition: transform 320ms cubic-bezier(0.16,1,0.3,1);
+}
+.drawer.open { transform: translateY(0); }
+.drawer-handle { width: 36px; height: 4px; border-radius: 2px; background: var(--border); margin: 0 auto var(--space-4); }
+.drawer-title { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: var(--space-4); }
+.memory-section { margin-bottom: var(--space-4); }
+.memory-label { font-size: 10px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--faint); margin-bottom: var(--space-2); }
+.memory-content {
+  font-size: 12px; color: var(--muted); line-height: 1.6;
+  background: var(--surfaceOff); border-radius: var(--radius-sm);
+  padding: var(--space-3); white-space: pre-wrap; word-break: break-word;
+  max-height: 120px; overflow-y: auto;
+}
+.skeleton {
+  background: linear-gradient(90deg, var(--surfaceOff) 25%, var(--dynamic) 50%, var(--surfaceOff) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--radius-sm); height: 60px;
+}
+@keyframes shimmer { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
 
-.layers{display:grid;grid-template-columns:repeat(3,1fr);gap:0.75rem}
-@media(max-width:600px){.layers{grid-template-columns:1fr}}
-.layer-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.125rem}
-.layer-number{font-size:0.6875rem;font-weight:600;font-family:var(--font-mono);color:var(--text-faint);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:0.375rem}
-.layer-name{font-size:0.9375rem;font-weight:600;letter-spacing:-0.01em;margin-bottom:0.25rem}
-.layer-desc{font-size:0.75rem;color:var(--text-muted);line-height:1.5;margin-bottom:0.75rem}
-.layer-status{display:flex;align-items:center;gap:0.375rem;font-size:0.75rem;font-weight:500}
-.layer-dot{width:7px;height:7px;border-radius:50%}
-.layer-repos{display:flex;flex-wrap:wrap;gap:0.375rem;margin-top:0.75rem}
-.repo-chip{font-size:0.6875rem;font-family:var(--font-mono);color:var(--text-muted);background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.1875rem 0.4375rem}
-.tools-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(200px,100%),1fr));gap:0.625rem}
-.tool-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:0.875rem 1rem;display:flex;align-items:center;gap:0.75rem}
-.tool-logo{width:30px;height:30px;border-radius:0.5rem;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.tool-name{font-size:0.875rem;font-weight:600;letter-spacing:-0.01em}
-.tool-layer{font-size:0.6875rem;color:var(--text-muted);margin-top:0.125rem;font-family:var(--font-mono)}
-.tool-connected{margin-left:auto;font-size:0.625rem;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;padding:0.1875rem 0.4375rem;border-radius:9999px}
-.connected{background:rgba(109,170,69,0.1);color:var(--green);border:1px solid rgba(109,170,69,0.2)}
-.via-url{background:rgba(79,152,163,0.1);color:var(--primary);border:1px solid rgba(79,152,163,0.2)}
-.via-mcp{background:rgba(253,171,67,0.1);color:var(--orange);border:1px solid rgba(253,171,67,0.2)}
+.toast {
+  position: fixed; bottom: calc(var(--space-6) + env(safe-area-inset-bottom));
+  left: 50%; transform: translateX(-50%) translateY(20px);
+  background: var(--dynamic); border: 1px solid var(--border);
+  border-radius: 9999px; padding: var(--space-2) var(--space-4);
+  font-size: 13px; color: var(--text);
+  opacity: 0; transition: opacity var(--trans), transform var(--trans);
+  z-index: 300; pointer-events: none; white-space: nowrap;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-.connect-steps{display:flex;flex-direction:column;gap:0.75rem}
-.connect-step{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.125rem;display:grid;grid-template-columns:32px 1fr;gap:0.875rem;align-items:start}
-.step-num{width:28px;height:28px;border-radius:50%;background:rgba(79,152,163,0.15);color:var(--primary);font-size:0.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:var(--font-mono)}
-.step-title{font-size:0.875rem;font-weight:600;margin-bottom:0.25rem}
-.step-body{font-size:0.8125rem;color:var(--text-muted);line-height:1.5}
-.step-code{display:inline-block;font-family:var(--font-mono);font-size:0.75rem;color:var(--primary);background:rgba(79,152,163,0.08);border:1px solid rgba(79,152,163,0.15);border-radius:var(--radius-sm);padding:0.125rem 0.4375rem;margin-top:0.375rem;word-break:break-all}
-
-/* REGISTRY EDITOR */
-.registry-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.125rem}
-.registry-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.875rem}
-.registry-title{font-size:0.875rem;font-weight:600}
-.registry-subtitle{font-size:0.75rem;color:var(--text-muted);margin-bottom:1rem;line-height:1.5}
-.registry-space-row{display:grid;grid-template-columns:1fr auto;gap:0.5rem;align-items:center;margin-bottom:0.5rem}
-.registry-input{width:100%;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.4375rem 0.625rem;font-size:0.8125rem;color:var(--text);outline:none;font-family:var(--font-mono);transition:border-color var(--transition)}
-.registry-input:focus{border-color:rgba(79,152,163,0.4)}
-.registry-label{font-size:0.6875rem;font-family:var(--font-mono);color:var(--text-muted);margin-bottom:0.25rem}
-.btn-save-url{font-size:0.75rem;font-weight:600;color:var(--primary);background:rgba(79,152,163,0.1);border:1px solid rgba(79,152,163,0.2);border-radius:var(--radius-sm);padding:0.375rem 0.75rem;white-space:nowrap;transition:background var(--transition)}
-.btn-save-url:hover{background:rgba(79,152,163,0.2)}
-
-.empty{text-align:center;padding:2.5rem 1rem;color:var(--text-muted)}
-.empty-icon{font-size:2rem;margin-bottom:0.5rem;opacity:0.4}
-.empty p{font-size:0.875rem}
-@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
-.skeleton{background:linear-gradient(90deg,var(--surface-2) 25%,var(--surface-3) 50%,var(--surface-2) 75%);background-size:200% 100%;animation:shimmer 1.6s ease-in-out infinite;border-radius:var(--radius-sm)}
-
-footer{border-top:1px solid var(--border);padding:0.875rem 1.25rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem}
-.footer-left{font-size:0.75rem;color:var(--text-faint);font-family:var(--font-mono)}
-.footer-right{display:flex;align-items:center;gap:0.75rem}
-.footer-link{font-size:0.75rem;color:var(--text-muted);transition:color var(--transition)}
-.footer-link:hover{color:var(--text)}
-
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.65);backdrop-filter:blur(4px);z-index:200;opacity:0;pointer-events:none;transition:opacity var(--transition)}
-.modal-overlay.open{opacity:1;pointer-events:all}
-.drawer{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);border-radius:var(--radius) var(--radius) 0 0;padding:1.25rem;z-index:201;transform:translateY(100%);transition:transform 320ms cubic-bezier(0.16,1,0.3,1);max-height:82dvh;overflow-y:auto}
-.drawer.open{transform:translateY(0)}
-.drawer-handle{width:36px;height:4px;background:var(--border);border-radius:9999px;margin:0 auto 1rem}
-.drawer-title{font-size:1rem;font-weight:600;margin-bottom:1rem}
-
-.prompt-modal{position:fixed;inset:0;z-index:300;display:flex;align-items:flex-end;justify-content:center;pointer-events:none;opacity:0;transition:opacity var(--transition)}
-.prompt-modal.open{opacity:1;pointer-events:all}
-.prompt-modal-box{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius) var(--radius) 0 0;padding:1.5rem 1.25rem;width:100%;max-width:640px;transform:translateY(100%);transition:transform 320ms cubic-bezier(0.16,1,0.3,1)}
-.prompt-modal.open .prompt-modal-box{transform:translateY(0)}
-.prompt-modal-title{font-size:0.875rem;font-weight:600;margin-bottom:0.875rem;color:var(--text-muted)}
-.prompt-modal-target{font-size:0.75rem;font-family:var(--font-mono);color:var(--primary);margin-bottom:0.75rem}
-.prompt-modal-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.75rem 0.875rem;font-size:0.9375rem;color:var(--text);outline:none;resize:none;height:80px;font-family:var(--font-body);transition:border-color var(--transition)}
-.prompt-modal-input:focus{border-color:rgba(79,152,163,0.4)}
-.prompt-modal-actions{display:flex;gap:0.5rem;margin-top:0.75rem;justify-content:flex-end}
-.btn-cancel{font-size:0.8125rem;color:var(--text-muted);padding:0.5rem 1rem;border-radius:var(--radius-sm);border:1px solid var(--border);transition:background var(--transition)}
-.btn-cancel:hover{background:var(--surface-3)}
-.btn-go{font-size:0.8125rem;font-weight:600;color:#fff;background:var(--primary);padding:0.5rem 1.125rem;border-radius:var(--radius-sm);transition:opacity var(--transition)}
-.btn-go:hover{opacity:0.85}
-
-.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(100px);background:var(--surface-3);border:1px solid var(--border);border-radius:var(--radius);padding:0.625rem 1rem;font-size:0.8125rem;white-space:nowrap;z-index:400;transition:transform 300ms cubic-bezier(0.16,1,0.3,1);box-shadow:0 8px 32px rgba(0,0,0,0.4)}
-.toast.show{transform:translateX(-50%) translateY(0)}
-
-@media(max-width:480px){main{padding:1rem 1rem 5rem}.spaces-grid{grid-template-columns:1fr}}
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 </style>
 </head>
 <body>
 <div class="app">
 
 <header>
-  <a class="logo" href="#">
-    <svg class="logo-mark" viewBox="0 0 28 28" fill="none" aria-label="Studio OS">
-      <rect width="28" height="28" rx="7" fill="rgba(79,152,163,0.15)" stroke="rgba(79,152,163,0.3)" stroke-width="1"/>
-      <path d="M7 14h4l2-5 3 10 2-7 2 4 1-2h4" stroke="#4f98a3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-      <circle cx="21" cy="9" r="2" fill="#6daa45"/>
-    </svg>
-    <span class="logo-text">Studio OS</span>
-  </a>
-  <div class="header-right">
-    <div class="live-badge">
-      <div class="live-dot"></div>
-      Live
-    </div>
-    <button class="refresh-btn" id="refreshBtn" aria-label="Refresh data">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
-        <path d="M21 3v5h-5"/>
-        <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
-        <path d="M3 21v-5h5"/>
+  <div class="logo">
+    <div class="logo-icon">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-label="Studio OS">
+        <rect x="2" y="2" width="7" height="7" rx="2" fill="white" opacity="0.9"/>
+        <rect x="11" y="2" width="7" height="7" rx="2" fill="white" opacity="0.6"/>
+        <rect x="2" y="11" width="7" height="7" rx="2" fill="white" opacity="0.6"/>
+        <rect x="11" y="11" width="7" height="7" rx="2" fill="white" opacity="0.3"/>
       </svg>
-    </button>
+    </div>
+    Studio OS
   </div>
+  <div class="live-badge"><div class="pulse"></div>LIVE</div>
+  <button class="refresh-btn" id="refreshBtn" aria-label="Refresh" onclick="refreshAll()">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
+      <path d="M21 3v5h-5"/>
+      <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
+      <path d="M8 16H3v5"/>
+    </svg>
+  </button>
 </header>
 
-<nav class="nav-tabs" role="tablist">
-  <button class="nav-tab active" role="tab" data-tab="spaces">Spaces</button>
-  <button class="nav-tab" role="tab" data-tab="feed">Message Bus</button>
-  <button class="nav-tab" role="tab" data-tab="stack">The Stack</button>
-  <button class="nav-tab" role="tab" data-tab="connect">Connect</button>
-</nav>
-
-<main>
-
-  <!-- SPACES TAB -->
-  <div class="tab-panel active" id="tab-spaces">
-    <div>
-      <div class="section-header">
-        <span class="section-title">Quick Prompt</span>
-        <span style="font-size:0.75rem;color:var(--text-faint)">opens Perplexity</span>
-      </div>
-      <div class="prompt-bar">
-        <button class="prompt-target" id="promptTargetBtn">studio-os</button>
-        <input class="prompt-input" id="quickPromptInput" type="text" placeholder="Ask any space anything…" autocomplete="off">
-        <button class="prompt-send" id="quickPromptSend">Ask</button>
-      </div>
+<main id="main">
+  <section>
+    <div class="section-head">
+      <span class="section-title">Active Spaces</span>
+      <span class="section-count" id="spaceCount">—</span>
     </div>
-    <div>
-      <div class="section-header">
-        <span class="section-title">Active Spaces</span>
-        <span style="font-size:0.75rem;color:var(--text-faint)" id="spacesCount">Loading…</span>
-      </div>
-      <div class="spaces-grid" id="spacesGrid">
-        <div class="space-card"><div class="skeleton" style="height:140px"></div></div>
-        <div class="space-card"><div class="skeleton" style="height:140px"></div></div>
-      </div>
+    <div class="spaces-grid" id="spacesGrid">
+      <div class="skeleton" style="height:120px"></div>
+      <div class="skeleton" style="height:120px"></div>
+      <div class="skeleton" style="height:120px"></div>
     </div>
-  </div>
+  </section>
 
-  <!-- FEED TAB -->
-  <div class="tab-panel" id="tab-feed">
-    <div class="section-header">
+  <section>
+    <div class="section-head">
       <span class="section-title">Message Bus</span>
-      <span style="font-size:0.75rem;color:var(--text-faint)" id="feedCount">Loading…</span>
+      <span class="section-count" id="msgCount">—</span>
     </div>
-    <div class="feed" id="feed">
-      <div class="feed-item">
-        <div class="feed-icon skeleton" style="width:32px;height:32px"></div>
-        <div style="flex:1;display:flex;flex-direction:column;gap:0.375rem">
-          <div class="skeleton" style="height:14px;width:60%"></div>
-          <div class="skeleton" style="height:12px;width:80%"></div>
-        </div>
-      </div>
+    <div class="feed" id="msgFeed">
+      <div class="skeleton"></div>
+      <div class="skeleton"></div>
     </div>
-  </div>
+  </section>
 
-  <!-- STACK TAB -->
-  <div class="tab-panel" id="tab-stack">
-    <div>
-      <div class="section-header"><span class="section-title">The Stack</span></div>
-      <div class="layers">
-        <div class="layer-card">
-          <div class="layer-number">Layer 1</div>
-          <div class="layer-name">Context</div>
-          <div class="layer-desc">GitHub markdown — spaces, memory, repo cards. Zero infrastructure. Any AI reads this.</div>
-          <div class="layer-status"><div class="layer-dot" style="background:var(--green)"></div><span style="color:var(--green);font-size:0.75rem;font-weight:500">Active</span></div>
-          <div class="layer-repos"><span class="repo-chip">studio-os</span></div>
-        </div>
-        <div class="layer-card">
-          <div class="layer-number">Layer 2</div>
-          <div class="layer-name">Action</div>
-          <div class="layer-desc">email-for-ai MCP — real email, calendar, todos, tool gateway, RBAC, audit trail.</div>
-          <div class="layer-status"><div class="layer-dot" style="background:var(--orange)"></div><span style="color:var(--orange);font-size:0.75rem;font-weight:500">Mac Mini</span></div>
-          <div class="layer-repos"><span class="repo-chip">email-for-ai</span><span class="repo-chip">email-for-ai-v2</span></div>
-        </div>
-        <div class="layer-card">
-          <div class="layer-number">Layer 3</div>
-          <div class="layer-name">Protocol</div>
-          <div class="layer-desc">Cairn stack — intent extraction, QA.Stone provenance, ACP protocol, V4Z compression.</div>
-          <div class="layer-status"><div class="layer-dot" style="background:var(--purple)"></div><span style="color:var(--purple);font-size:0.75rem;font-weight:500">Cairn</span></div>
-          <div class="layer-repos"><span class="repo-chip">qastone</span><span class="repo-chip">cairn-intent</span><span class="repo-chip">acp-protocol</span></div>
-        </div>
-      </div>
-    </div>
-    <div>
-      <div class="section-header"><span class="section-title">Connected AI Tools</span></div>
-      <div class="tools-grid">
-        <div class="tool-card">
-          <div class="tool-logo" style="background:rgba(79,152,163,0.12);border:1px solid rgba(79,152,163,0.2)">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#4f98a3" stroke-width="1.5"/><path d="M12 8v4l3 3" stroke="#4f98a3" stroke-width="1.5" stroke-linecap="round"/></svg>
-          </div>
-          <div><div class="tool-name">Perplexity</div><div class="tool-layer">Space → Layer 1</div></div>
-          <div class="tool-connected connected">Native</div>
-        </div>
-        <div class="tool-card">
-          <div class="tool-logo" style="background:rgba(253,171,67,0.1);border:1px solid rgba(253,171,67,0.15)">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5z" stroke="#fdab43" stroke-width="1.5" stroke-linejoin="round"/><path d="M2 17l10 5 10-5" stroke="#fdab43" stroke-width="1.5" stroke-linejoin="round"/><path d="M2 12l10 5 10-5" stroke="#fdab43" stroke-width="1.5" stroke-linejoin="round"/></svg>
-          </div>
-          <div><div class="tool-name">Claude</div><div class="tool-layer">Project → Layer 1</div></div>
-          <div class="tool-connected via-url">Via URL</div>
-        </div>
-        <div class="tool-card">
-          <div class="tool-logo" style="background:rgba(109,170,69,0.1);border:1px solid rgba(109,170,69,0.15)">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="4" stroke="#6daa45" stroke-width="1.5"/><path d="M9 9h6M9 12h6M9 15h4" stroke="#6daa45" stroke-width="1.5" stroke-linecap="round"/></svg>
-          </div>
-          <div><div class="tool-name">ChatGPT</div><div class="tool-layer">GPT → Layer 1</div></div>
-          <div class="tool-connected via-url">Via URL</div>
-        </div>
-        <div class="tool-card">
-          <div class="tool-logo" style="background:rgba(168,111,223,0.1);border:1px solid rgba(168,111,223,0.15)">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><polyline points="16 18 22 12 16 6" stroke="#a86fdf" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><polyline points="8 6 2 12 8 18" stroke="#a86fdf" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </div>
-          <div><div class="tool-name">Cursor</div><div class="tool-layer">IDE → Layer 1+2</div></div>
-          <div class="tool-connected via-mcp">MCP</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- CONNECT TAB -->
-  <div class="tab-panel" id="tab-connect">
-    <div class="section-header"><span class="section-title">Space URLs</span></div>
-    <div class="registry-card">
-      <div class="registry-title">Paste Your Perplexity Space Links</div>
-      <div class="registry-subtitle" style="margin-top:0.25rem">Each Space card's "Open Space" button uses these URLs. Paste the full link from your browser bar when inside a Space. Updates take effect on next refresh.</div>
-      <div id="registryFields">
-        <div style="color:var(--text-muted);font-size:0.8125rem;padding:0.5rem 0">Loading spaces…</div>
-      </div>
-    </div>
-
-    <div class="section-header" style="margin-top:0.5rem"><span class="section-title">How to Connect</span></div>
-    <div class="connect-steps">
-      <div class="connect-step">
-        <div class="step-num">1</div>
+  <section>
+    <div class="section-head"><span class="section-title">The Stack</span></div>
+    <div class="stack-cards">
+      <div class="stack-card">
+        <div class="stack-icon" style="background:rgba(79,152,163,0.15)">📂</div>
         <div>
-          <div class="step-title">Add the repo as a source</div>
-          <div class="step-body">Perplexity: Space → Settings → Sources. Claude: Project → Knowledge. ChatGPT: GPT → Knowledge.
-            <div class="step-code">https://github.com/nothinginfinity/studio-os</div>
-          </div>
+          <div class="stack-label">Context Layer</div>
+          <div class="stack-sub">GitHub — shared memory substrate</div>
+          <div class="repo-chips"><span class="repo-chip">studio-os</span><span class="repo-chip">phone-studio</span></div>
         </div>
+        <div class="status-dot active" style="margin-left:auto;margin-top:0"></div>
       </div>
-      <div class="connect-step">
-        <div class="step-num">2</div>
+      <div class="stack-card">
+        <div class="stack-icon" style="background:rgba(253,171,67,0.15)">✉️</div>
         <div>
-          <div class="step-title">Paste the session protocol</div>
-          <div class="step-body">Add to your AI's system prompt / custom instructions so it reads and writes to the studio.
-            <div class="step-code">At session start: read spaces/[your-space]/memory/working.md<br>At session end: append summary to spaces/[your-space]/outbox.md</div>
-          </div>
+          <div class="stack-label">Action Layer</div>
+          <div class="stack-sub">Outbox → Inbox routing</div>
+          <div class="repo-chips"><span class="repo-chip">outbox.md</span><span class="repo-chip">inbox.md</span></div>
         </div>
+        <div class="status-dot active" style="margin-left:auto;margin-top:0"></div>
       </div>
-      <div class="connect-step">
-        <div class="step-num">3</div>
+      <div class="stack-card">
+        <div class="stack-icon" style="background:rgba(232,175,52,0.15)">⚙️</div>
         <div>
-          <div class="step-title">Install this dashboard</div>
-          <div class="step-body">iOS Safari: Share → Add to Home Screen. Android Chrome: ⋮ → Add to Home Screen.
-            <div class="step-code">https://nothinginfinity.github.io/studio-os</div>
-          </div>
+          <div class="stack-label">Protocol Layer</div>
+          <div class="stack-sub">Cairn — cross-LLM conventions</div>
+          <div class="repo-chips"><span class="repo-chip">cairn-protocol</span></div>
         </div>
+        <div class="status-dot idle" style="margin-left:auto;margin-top:0"></div>
       </div>
     </div>
-  </div>
+  </section>
 
+  <section>
+    <div class="section-head"><span class="section-title">Connected AI Tools</span></div>
+    <div class="ai-grid">
+      <div class="ai-card"><div style="font-size:20px">🔮</div><div><div class="ai-name">Perplexity</div><div class="ai-mode">Native</div></div><div class="ai-dot native"></div></div>
+      <div class="ai-card"><div style="font-size:20px">🤖</div><div><div class="ai-name">Claude</div><div class="ai-mode">Via URL</div></div><div class="ai-dot url"></div></div>
+      <div class="ai-card"><div style="font-size:20px">💬</div><div><div class="ai-name">ChatGPT</div><div class="ai-mode">Via URL</div></div><div class="ai-dot url"></div></div>
+      <div class="ai-card"><div style="font-size:20px">⚡</div><div><div class="ai-name">Cursor</div><div class="ai-mode">MCP</div></div><div class="ai-dot mcp"></div></div>
+    </div>
+    <div style="margin-top:var(--space-2);font-size:10px;color:var(--faint);display:flex;gap:var(--space-3)">
+      <span>● Native = direct</span>
+      <span style="color:var(--gold)">● URL = paste-ready</span>
+      <span style="color:var(--blue)">● MCP = toolcall</span>
+    </div>
+  </section>
 </main>
 
-<footer>
-  <div class="footer-left" id="lastUpdated">Fetching from GitHub…</div>
-  <div class="footer-right">
-    <a class="footer-link" href="https://github.com/nothinginfinity/studio-os" target="_blank" rel="noopener">GitHub ↗</a>
-    <a class="footer-link" href="https://github.com/nothinginfinity/studio-os/blob/main/BRIDGE.md" target="_blank" rel="noopener">Bridge Docs ↗</a>
-  </div>
-</footer>
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer" role="dialog" aria-modal="true">
+  <div class="drawer-handle"></div>
+  <div class="drawer-title" id="drawerTitle">Space Memory</div>
+  <div id="drawerBody"></div>
 </div>
 
 <div class="toast" id="toast"></div>
-<div class="modal-overlay" id="overlay"></div>
-<div class="drawer" id="drawer">
-  <div class="drawer-handle"></div>
-  <div class="drawer-title" id="drawerTitle">Space Memory</div>
-  <div id="drawerContent"></div>
-</div>
-
-<div class="prompt-modal" id="promptModal">
-  <div class="prompt-modal-box">
-    <div class="prompt-modal-title" id="promptModalTitle">Quick Prompt</div>
-    <div class="prompt-modal-target" id="promptModalTarget">→ studio-os</div>
-    <textarea class="prompt-modal-input" id="promptModalInput" placeholder="Type your prompt…"></textarea>
-    <div class="prompt-modal-actions">
-      <button class="btn-cancel" id="promptModalCancel">Cancel</button>
-      <button class="btn-go" id="promptModalGo">Open in Perplexity →</button>
-    </div>
-  </div>
 </div>
 
 <script>
-const OWNER='nothinginfinity',REPO='studio-os';
-const BASE=`https://raw.githubusercontent.com/${OWNER}/${REPO}/main`;
-const API=`https://api.github.com/repos/${OWNER}/${REPO}`;
+const OWNER = 'nothinginfinity';
+const REPO  = 'studio-os';
+const BRANCH = 'main';
+const RAW = `https://raw.githubusercontent.com/${OWNER}/${REPO}/${BRANCH}`;
 
-// Will be populated from registry.json
-let SPACES=[];
-let promptTargetIdx=0;
-
-const $=id=>document.getElementById(id);
-
-// TOAST
-function showToast(msg,d=2200){const t=$('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),d)}
-
-// TABS
-document.querySelectorAll('.nav-tab').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    document.querySelectorAll('.nav-tab').forEach(b=>b.classList.remove('active'));
-    document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
-    btn.classList.add('active');
-    $('tab-'+btn.dataset.tab).classList.add('active');
-  });
-});
-
-// DRAWER
-function openDrawer(title,html){$('drawerTitle').textContent=title;$('drawerContent').innerHTML=html;$('drawer').classList.add('open');$('overlay').classList.add('open')}
-function closeDrawer(){$('drawer').classList.remove('open');$('overlay').classList.remove('open')}
-$('overlay').addEventListener('click',closeDrawer);
-
-// PROMPT
-function updatePromptTarget(){
-  if(!SPACES.length)return;
-  const s=SPACES[promptTargetIdx%SPACES.length];
-  $('promptTargetBtn').textContent=s.name;
-  $('promptTargetBtn').style.color=s.color;
-  $('promptModalTarget').textContent='→ '+s.name;
-  $('promptModalTitle').textContent='Quick Prompt to '+s.name;
-}
-$('promptTargetBtn').addEventListener('click',()=>{promptTargetIdx++;updatePromptTarget();});
-
-function openPromptModal(idx){
-  if(idx!==undefined)promptTargetIdx=idx;
-  updatePromptTarget();
-  $('promptModalInput').value='';
-  $('promptModal').classList.add('open');
-  setTimeout(()=>$('promptModalInput').focus(),350);
-}
-function closePromptModal(){$('promptModal').classList.remove('open')}
-$('promptModalCancel').addEventListener('click',closePromptModal);
-$('promptModal').addEventListener('click',e=>{if(e.target===$('promptModal'))closePromptModal()});
-
-function firePrompt(txt){
-  if(!txt.trim())return;
-  const s=SPACES[promptTargetIdx%SPACES.length];
-  // Use real Space URL if available, otherwise fallback to search
-  if(s && s.url && s.url.includes('/collections/')){
-    window.open(s.url,'_blank','noopener');
-  } else {
-    const q=encodeURIComponent(`[${s.name}] ${txt.trim()}`);
-    window.open(`https://www.perplexity.ai/search?q=${q}`,'_blank','noopener');
-  }
-  closePromptModal();
-  showToast('Opened in Perplexity');
-}
-$('promptModalGo').addEventListener('click',()=>firePrompt($('promptModalInput').value));
-$('promptModalInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();firePrompt($('promptModalInput').value)}});
-$('quickPromptSend').addEventListener('click',()=>{const v=$('quickPromptInput').value;$('quickPromptInput').value='';firePrompt(v)});
-$('quickPromptInput').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();const v=$('quickPromptInput').value;$('quickPromptInput').value='';firePrompt(v)}});
-
-// FETCH
-async function fetchRaw(path){try{const r=await fetch(`${BASE}/${path}`,{cache:'no-store'});if(!r.ok)return null;return await r.text()}catch{return null}}
-
-// LOAD REGISTRY
-async function loadRegistry(){
-  const txt=await fetchRaw('spaces/registry.json');
-  if(txt){
-    try{
-      const data=JSON.parse(txt);
-      if(data.spaces&&data.spaces.length) SPACES=data.spaces;
-    }catch(e){}
-  }
-  // Fallback defaults
-  if(!SPACES.length) SPACES=[
-    {id:'studio-os',name:'studio-os',role:'Building Manager · OS Layer',color:'#4f98a3',bg:'rgba(79,152,163,0.12)',initials:'OS',ai:'Perplexity',url:'https://www.perplexity.ai/collections/studio-os'},
-    {id:'phone-studio',name:'phone-studio',role:'iPhone PWA Builder',color:'#a86fdf',bg:'rgba(168,111,223,0.12)',initials:'PS',ai:'Perplexity',url:'https://www.perplexity.ai/collections/phone-studio-4Lol29ljTsyacjBNZLGB6g'}
-  ];
-  updatePromptTarget();
-  renderRegistryFields();
-}
-
-// REGISTRY FIELDS (Connect tab)
-function renderRegistryFields(){
-  $('registryFields').innerHTML=SPACES.map((s,i)=>`
-    <div style="margin-bottom:0.875rem">
-      <div class="registry-label">${s.name}</div>
-      <div class="registry-space-row">
-        <input class="registry-input" id="reg-${s.id}" type="url" value="${s.url||''}" placeholder="https://www.perplexity.ai/collections/…">
-        <button class="btn-save-url" onclick="saveSpaceUrl('${s.id}',${i})">Save</button>
-      </div>
-    </div>
-  `).join('')+`<div style="font-size:0.75rem;color:var(--text-faint);margin-top:0.25rem">Changes update the Open Space button immediately. To make permanent, edit spaces/registry.json in GitHub.</div>`;
-}
-
-function saveSpaceUrl(id,idx){
-  const val=$('reg-'+id).value.trim();
-  if(val&&SPACES[idx]){
-    SPACES[idx].url=val;
-    showToast('URL saved for '+SPACES[idx].name+' ✓');
-    renderSpaces(lastSpaceData);
-  }
-}
-
-// PARSE MESSAGES
-function parseMessages(md,spaceId){
-  if(!md)return[];
-  const blocks=md.split(/^---$/m).map(b=>b.trim()).filter(Boolean);
-  const msgs=[];
-  for(const block of blocks){
-    if(!block.includes('**From:**'))continue;
-    const get=key=>{const m=block.match(new RegExp('\\*\\*'+key+':\\*\\*\\s*(.+)'));return m?m[1].trim():''};
-    const bodyMatch=block.match(/\*\*Type:\*\*.+\n+([\s\S]*?)\n+\*\*Status:/);
-    msgs.push({from:get('From')||spaceId,to:get('To')||'all',type:get('Type')||'note',subject:get('Subject')||'(no subject)',body:bodyMatch?bodyMatch[1].trim():'',route:get('Route')||null,time:get('Date')||'',status:get('Status')||'open'});
-  }
-  return msgs;
-}
-
-const DEMO_FEED=[
-  {from:'studio-os',to:'phone-studio',type:'update',time:'just now',subject:'registry.json deployed — real Space URLs active',body:'Open Space buttons now link directly to your Perplexity collections. Add new spaces by editing spaces/registry.json.',route:null},
-  {from:'studio-os',to:'all',type:'decision',time:'2h ago',subject:'BRIDGE.md added — routing decision tree',body:'All cross-layer message routing now defined. email-for-ai handles Layer 2 execution.',route:null},
-  {from:'phone-studio',to:'studio-os',type:'request',time:'3h ago',subject:'PWA dashboard needed for beta testers',body:'Need a human-readable view of the message bus. 10 beta users require home screen install.',route:'email-for-ai'},
-  {from:'studio-os',to:'all',type:'note',time:'5h ago',subject:'Repo stack indexed in BRIDGE.md',body:'12 repos catalogued across 3 layers.',route:null}
+const SPACES = [
+  { id: 'studio-os',    name: 'Studio OS',    role: 'Orchestrator', ai: 'Perplexity', color: '#4f98a3' },
+  { id: 'phone-studio', name: 'Phone Studio', role: 'App Builder',  ai: 'Perplexity', color: '#a86fdf' },
+  { id: 'trubi-wallet', name: 'TrubiWallet',  role: 'Finance App',  ai: 'Claude',     color: '#6daa45' },
+  { id: 'repo-hub',     name: 'Repo Hub',     role: 'Index',        ai: 'ChatGPT',    color: '#e8af34' },
 ];
 
-// RENDER SPACES
-let lastSpaceData=[];
-function renderSpaces(spaceData){
-  lastSpaceData=spaceData;
-  $('spacesCount').textContent=`${SPACES.length} spaces`;
-  $('spacesGrid').innerHTML=spaceData.map(({space,working},i)=>{
-    const raw=working?working.replace(/^#.*\n+/m,'').replace(/^>.*\n+/gm,'').replace(/_No session active[^_]*_/,'').trim():'';
-    const preview=raw.length>10?raw.split('\n').slice(0,3).join(' ').substring(0,160):'No active session — awaiting next session start.';
-    const statusClass=raw.length>10?'status-active':'status-idle';
-    const spaceUrl=space.url||`https://www.perplexity.ai/collections/${space.id}`;
-    return`<div class="space-card">
-      <div class="space-card-top">
-        <div class="space-info">
-          <div class="space-avatar" style="background:${space.bg};color:${space.color}">${space.initials}</div>
-          <div><div class="space-name">${space.name}</div><div class="space-role">${space.role}</div></div>
-        </div>
-        <div class="space-status-dot ${statusClass}"></div>
-      </div>
-      <div class="space-working">${preview}</div>
-      <div class="space-meta"><span class="space-tag">${space.ai||'Perplexity'}</span><span class="space-tag">Layer 1</span></div>
-      <div class="space-actions">
-        <button class="btn-open-space" onclick="window.open('${spaceUrl}','_blank','noopener')">Open Space ↗</button>
-        <button class="btn-quick-prompt" onclick="openPromptModal(${i})">Quick Prompt</button>
-        <button class="btn-memory" onclick="openSpaceDrawer('${space.id}')">Memory →</button>
-      </div>
-    </div>`;
-  }).join('')+`<div class="space-card-add" onclick="document.querySelector('[data-tab=connect]').click();showToast('Paste your Space URL in the Connect tab')">
-    <div class="space-card-add-icon">＋</div>
-    <div style="font-size:0.8125rem;font-weight:500">Add a Space</div>
-    <div style="font-size:0.75rem;color:var(--text-faint)">paste URL in Connect tab</div>
-  </div>`;
+const DEMO_MSGS = [
+  { from:'studio-os', to:'phone-studio', type:'decision', subject:'Architecture lock', body:'Using GitHub Pages + raw API. No server needed. Pushing PWA today.', time:'5m ago' },
+  { from:'phone-studio', to:'studio-os', type:'update', subject:'Build status', body:'phone-studio PWA shell complete. Testing on iOS Safari now. Home screen install works.', time:'12m ago' },
+  { from:'studio-os', to:'repo-hub', type:'request', subject:'Index all repos', body:'Need a summary card for each of the 50 repos. Format: name, purpose, status, related repos.', time:'1h ago' },
+  { from:'repo-hub', to:'studio-os', type:'note', subject:'Cairn protocol draft', body:'Drafted message format spec in cairn-protocol/spec.md. Ready for review before rolling out to all spaces.', time:'2h ago' },
+  { from:'trubi-wallet', to:'studio-os', type:'question', subject:'Auth layer', body:'Should wallet use GitHub OAuth or a passkey? Needs to work offline-first on mobile.', time:'3h ago' },
+];
+
+async function fetchRaw(path) {
+  try {
+    const r = await fetch(`${RAW}/${path}`, { cache: 'no-store' });
+    if (!r.ok) return null;
+    return await r.text();
+  } catch { return null; }
 }
 
-// RENDER FEED
-function renderFeed(messages){
-  $('feedCount').textContent=`${messages.length} messages`;
-  if(!messages.length){$('feed').innerHTML='<div class="empty"><div class="empty-icon">📭</div><p>No messages yet</p></div>';return}
-  $('feed').innerHTML=messages.map(msg=>{
-    const s=SPACES.find(x=>x.id===msg.from)||{color:'#7a7870',bg:'rgba(122,120,112,0.1)',initials:(msg.from||'??').substring(0,2).toUpperCase()};
-    const routeHtml=msg.route?`<div class="feed-route">⚡ Route: ${msg.route}</div>`:'';
-    return`<div class="feed-item">
-      <div class="feed-icon" style="background:${s.bg};color:${s.color}">${s.initials}</div>
-      <div>
-        <div class="feed-top">
-          <span class="feed-from" style="color:${s.color}">${msg.from}</span>
-          <span class="feed-arrow">→</span>
-          <span class="feed-to">${msg.to}</span>
-          <span class="feed-type-badge type-${msg.type}">${msg.type}</span>
-          <span class="feed-time">${msg.time}</span>
-        </div>
-        <div class="feed-subject">${msg.subject}</div>
-        ${msg.body?`<div class="feed-body">${msg.body.substring(0,200)}${msg.body.length>200?'…':''}</div>`:''}
-        ${routeHtml}
+function parseOutbox(text, spaceId) {
+  if (!text) return [];
+  const blocks = text.split(/^---$/m).filter(b => b.trim());
+  return blocks.map(block => {
+    const lines = block.trim().split('\n');
+    const meta = {};
+    lines.forEach(l => {
+      const m = l.match(/^\*\*(\w+):\*\*\s*(.+)/);
+      if (m) meta[m[1].toLowerCase()] = m[2].trim();
+    });
+    const bodyStart = lines.findIndex(l => l.trim() === '') + 1;
+    const body = lines.slice(bodyStart).join(' ').trim();
+    return { from: meta.from||spaceId, to: meta.to||'—', type: meta.type||'note', subject: meta.subject||'(no subject)', body: body||meta.body||'', time: meta.timestamp||meta.time||'', route: meta.route||'' };
+  }).filter(m => m.subject);
+}
+
+async function renderSpaces() {
+  const grid = document.getElementById('spacesGrid');
+  const results = await Promise.all(SPACES.map(async sp => {
+    const working = await fetchRaw(`spaces/${sp.id}/memory/working.md`);
+    return { ...sp, working };
+  }));
+  const activeCount = results.filter(s => s.working).length;
+  document.getElementById('spaceCount').textContent = `${activeCount} / ${results.length}`;
+  grid.innerHTML = results.map(sp => {
+    const active = !!sp.working;
+    const preview = sp.working ? sp.working.replace(/^#+.*$/gm,'').replace(/\*\*/g,'').trim().slice(0,80) : 'No active session';
+    const initials = sp.name.split(' ').map(w=>w[0]).join('').slice(0,2);
+    return `<div class="space-card" onclick="openDrawer('${sp.id}','${sp.name}')" role="button" tabindex="0" aria-label="Open ${sp.name} memory">
+      <div class="space-card-top">
+        <div class="space-avatar" style="background:${sp.color}">${initials}</div>
+        <div class="status-dot ${active?'active':'idle'}"></div>
+      </div>
+      <div class="space-name">${sp.name}</div>
+      <div class="space-role">${sp.role}</div>
+      <div class="space-preview">${preview}</div>
+      <div class="space-ai-chip">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        ${sp.ai}
       </div>
     </div>`;
   }).join('');
 }
 
-// SPACE DRAWER
-const spaceCache={};
-async function openSpaceDrawer(id){
-  const space=SPACES.find(s=>s.id===id);if(!space)return;
-  openDrawer(space.name+'  ·  Memory','<div style="color:var(--text-muted);font-size:0.875rem;padding:1rem 0">Loading memory layers…</div>');
-  if(!spaceCache[id]){
-    const[working,episodic,semantic]=await Promise.all([fetchRaw(`spaces/${id}/memory/working.md`),fetchRaw(`spaces/${id}/memory/episodic.md`),fetchRaw(`spaces/${id}/memory/semantic.md`)]);
-    spaceCache[id]={working,episodic,semantic};
-  }
-  const{working,episodic,semantic}=spaceCache[id];
-  const section=(title,content,color)=>`<div style="margin-bottom:1.25rem"><div style="font-size:0.6875rem;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:${color};margin-bottom:0.5rem">${title}</div><div style="font-size:0.8125rem;line-height:1.6;color:var(--text-muted);white-space:pre-wrap;background:var(--surface-2);border-radius:var(--radius-sm);padding:0.75rem 0.875rem;font-family:var(--font-mono)">${content||'Empty'}</div></div>`;
-  const clean=md=>md?md.replace(/^#.+\n+/m,'').replace(/^>.*\n+/gm,'').replace(/_No.+_/,'No entries yet.').trim().substring(0,800):'Not found';
-  $('drawerContent').innerHTML=section('Working Memory',clean(working),'var(--green)')+section('Episodic Log',clean(episodic),'var(--primary)')+section('Semantic Lessons',clean(semantic),'var(--purple)');
+async function renderFeed() {
+  const feed = document.getElementById('msgFeed');
+  let allMsgs = [];
+  const fetched = await Promise.all(SPACES.map(async sp => {
+    const text = await fetchRaw(`spaces/${sp.id}/outbox.md`);
+    return parseOutbox(text, sp.id);
+  }));
+  fetched.forEach(msgs => allMsgs.push(...msgs));
+  if (allMsgs.length === 0) allMsgs = DEMO_MSGS;
+  document.getElementById('msgCount').textContent = `${allMsgs.length} messages`;
+  feed.innerHTML = allMsgs.map(m => `
+  <div class="msg-card">
+    <div class="msg-meta">
+      <span class="msg-from">${m.from}</span>
+      <span class="msg-arrow">→</span>
+      <span class="msg-to">${m.to}</span>
+      <span class="msg-type type-${m.type}">${m.type}</span>
+      ${m.time ? `<span class="msg-time">${m.time}</span>` : ''}
+    </div>
+    <div class="msg-subject">${m.subject}</div>
+    ${m.body ? `<div class="msg-body">${m.body.slice(0,140)}${m.body.length>140?'…':''}</div>` : ''}
+    ${m.route ? `<div class="msg-route"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>${m.route}</div>` : ''}
+  </div>`).join('');
 }
 
-// MAIN LOAD
-async function loadData(){
-  const btn=$('refreshBtn');btn.classList.add('spinning');
-  const spaceData=await Promise.all(SPACES.map(async space=>({space,working:await fetchRaw(`spaces/${space.id}/memory/working.md`)})));
-  renderSpaces(spaceData);
-  const outboxFiles=await Promise.all(SPACES.map(async space=>{const md=await fetchRaw(`spaces/${space.id}/outbox.md`);return parseMessages(md,space.id)}));
-  const allMessages=outboxFiles.flat();
-  renderFeed(allMessages.length>0?allMessages:DEMO_FEED);
-  try{const r=await fetch(`${API}/commits?per_page=1`);if(r.ok){const d=await r.json();if(d[0]){const dt=new Date(d[0].commit.committer.date);$('lastUpdated').textContent=`Last commit: ${dt.toLocaleString()}`}}}catch{$('lastUpdated').textContent='studio-os · github'}
+async function openDrawer(spaceId, name) {
+  document.getElementById('drawerTitle').textContent = name;
+  document.getElementById('drawerBody').innerHTML = `
+    <div class="memory-section"><div class="memory-label">Working Memory</div><div class="skeleton"></div></div>
+    <div class="memory-section"><div class="memory-label">Episodic Memory</div><div class="skeleton" style="height:40px"></div></div>
+    <div class="memory-section"><div class="memory-label">Semantic Memory</div><div class="skeleton" style="height:40px"></div></div>`;
+  document.getElementById('drawerOverlay').classList.add('open');
+  document.getElementById('drawer').classList.add('open');
+  const [working, episodic, semantic] = await Promise.all([
+    fetchRaw(`spaces/${spaceId}/memory/working.md`),
+    fetchRaw(`spaces/${spaceId}/memory/episodic.md`),
+    fetchRaw(`spaces/${spaceId}/memory/semantic.md`),
+  ]);
+  document.getElementById('drawerBody').innerHTML = `
+    <div class="memory-section"><div class="memory-label">Working Memory</div><div class="memory-content">${working||'— empty —'}</div></div>
+    <div class="memory-section"><div class="memory-label">Episodic Memory</div><div class="memory-content">${episodic||'— empty —'}</div></div>
+    <div class="memory-section"><div class="memory-label">Semantic Memory</div><div class="memory-content">${semantic||'— empty —'}</div></div>`;
+}
+
+function closeDrawer() {
+  document.getElementById('drawerOverlay').classList.remove('open');
+  document.getElementById('drawer').classList.remove('open');
+}
+
+async function refreshAll() {
+  const btn = document.getElementById('refreshBtn');
+  btn.classList.add('spinning');
+  await Promise.all([renderSpaces(), renderFeed()]);
   btn.classList.remove('spinning');
-  showToast('Refreshed ✓');
+  showToast('Refreshed');
 }
 
-$('refreshBtn').addEventListener('click',loadData);
-setInterval(loadData,60000);
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
 
-// Boot sequence: load registry first, then data
-loadRegistry().then(()=>loadData());
+setInterval(refreshAll, 60000);
 
-if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js').catch(()=>{})}
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').catch(() => {});
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
+
+renderSpaces();
+renderFeed();
 </script>
 </body>
 </html>
