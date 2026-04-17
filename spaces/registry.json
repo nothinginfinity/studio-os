@@ -30,8 +30,8 @@
       "bg": "rgba(218,113,1,0.12)",
       "initials": "PG",
       "ai": "Perplexity",
-      "url": "https://github.com/nothinginfinity/phone-studio-game",
-      "notes": "Update url with your real Perplexity Space link when created"
+      "url": "https://www.perplexity.ai/collections/phone-studio-game-buzu7SRuRdaqZT.4CagOvw",
+      "notes": "Real URL confirmed"
     }
   ],
   "_instructions": "To add a new space: copy any entry above, update id/name/role/color/initials/url. The dashboard reads this file live — no code changes needed. Get your Space URL from Perplexity → open Space → copy URL from browser bar."
