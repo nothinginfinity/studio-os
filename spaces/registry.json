@@ -1,0 +1,27 @@
+{
+  "spaces": [
+    {
+      "id": "studio-os",
+      "name": "studio-os",
+      "role": "Building Manager · OS Layer",
+      "color": "#4f98a3",
+      "bg": "rgba(79,152,163,0.12)",
+      "initials": "OS",
+      "ai": "Perplexity",
+      "url": "https://www.perplexity.ai/collections/studio-os",
+      "notes": "Replace url with your real Perplexity Space link"
+    },
+    {
+      "id": "phone-studio",
+      "name": "phone-studio",
+      "role": "iPhone PWA Builder",
+      "color": "#a86fdf",
+      "bg": "rgba(168,111,223,0.12)",
+      "initials": "PS",
+      "ai": "Perplexity",
+      "url": "https://www.perplexity.ai/collections/phone-studio-4Lol29ljTsyacjBNZLGB6g",
+      "notes": "Real URL confirmed"
+    }
+  ],
+  "_instructions": "To add a new space: copy any entry above, update id/name/role/color/initials/url. The dashboard reads this file live — no code changes needed. Get your Space URL from Perplexity → open Space → copy URL from browser bar."
+}
