@@ -1,8 +1,9 @@
-const CACHE = 'studio-os-v1';
+const CACHE = 'studio-os-v2';
 const SHELL = [
-  '/studio-os/',
-  '/studio-os/index.html',
-  '/studio-os/manifest.json'
+  './',
+  './index.html',
+  './manifest.json',
+  'https://fonts.googleapis.com/css2?family=Inter:wght@300..700&family=JetBrains+Mono:wght@400;500&display=swap'
 ];
 
 // Install — cache the app shell
@@ -14,7 +15,7 @@ self.addEventListener('install', e => {
   );
 });
 
-// Activate — clean up old caches
+// Activate — purge old caches
 self.addEventListener('activate', e => {
   e.waitUntil(
     caches.keys().then(keys =>
@@ -23,69 +24,37 @@ self.addEventListener('activate', e => {
   );
 });
 
-// Fetch — shell from cache, GitHub API/raw always network-first
+// Fetch strategy:
+// - GitHub raw/API requests: network first, no cache (always fresh)
+// - App shell assets: cache first, fallback to network
 self.addEventListener('fetch', e => {
-  const url = new URL(e.request.url);
+  const url = e.request.url;
 
-  // Always go network-first for GitHub content (live data)
-  if (url.hostname === 'raw.githubusercontent.com' ||
-      url.hostname === 'api.github.com' ||
-      url.hostname === 'fonts.googleapis.com' ||
-      url.hostname === 'fonts.gstatic.com') {
+  // Always go network-first for GitHub data
+  if (url.includes('raw.githubusercontent.com') || url.includes('api.github.com')) {
     e.respondWith(
-      fetch(e.request)
-        .catch(() => new Response('', { status: 503 }))
+      fetch(e.request).catch(() => new Response('{}', {
+        headers: { 'Content-Type': 'application/json' }
+      }))
     );
     return;
   }
 
-  // App shell — cache first, fallback to network
+  // Cache-first for shell assets
   e.respondWith(
     caches.match(e.request).then(cached => {
       if (cached) return cached;
       return fetch(e.request).then(response => {
-        // Cache valid shell responses
-        if (response && response.status === 200 && response.type === 'basic') {
-          const clone = response.clone();
-          caches.open(CACHE).then(c => c.put(e.request, clone));
-        }
+        if (!response || response.status !== 200 || response.type === 'opaque') return response;
+        const clone = response.clone();
+        caches.open(CACHE).then(c => c.put(e.request, clone));
         return response;
-      }).catch(() => caches.match('/studio-os/index.html'));
+      }).catch(() => caches.match('./index.html'));
     })
   );
 });
 
-// Background sync — refresh data when connection restored
-self.addEventListener('sync', e => {
-  if (e.tag === 'studio-os-sync') {
-    e.waitUntil(
-      self.clients.matchAll().then(clients =>
-        clients.forEach(client =>
-          client.postMessage({ type: 'SYNC_READY' })
-        )
-      )
-    );
-  }
-});
-
-// Push notifications (future layer 2 integration)
-self.addEventListener('push', e => {
-  if (!e.data) return;
-  const data = e.data.json();
-  e.waitUntil(
-    self.registration.showNotification(data.title || 'Studio OS', {
-      body: data.body || 'New message in the bus',
-      icon: '/studio-os/manifest.json',
-      badge: '/studio-os/manifest.json',
-      tag: data.tag || 'studio-os',
-      data: { url: data.url || '/studio-os/' }
-    })
-  );
-});
-
-self.addEventListener('notificationclick', e => {
-  e.notification.close();
-  e.waitUntil(
-    clients.openWindow(e.notification.data.url || '/studio-os/')
-  );
+// Background sync — notify clients when new content is available
+self.addEventListener('message', e => {
+  if (e.data && e.data.type === 'SKIP_WAITING') self.skipWaiting();
 });
