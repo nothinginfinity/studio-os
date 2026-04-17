@@ -10,69 +10,72 @@
 <meta name="description" content="Live dashboard for the Studio OS multi-agent AI coordination system">
 <link rel="manifest" href="manifest.json">
 <title>Studio OS</title>
-
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-
 <style>
 :root {
-  --bg:           #0f0e0c;
-  --surface:      #161513;
-  --surface-2:    #1c1b18;
-  --surface-3:    #242320;
-  --border:       rgba(255,255,255,0.07);
-  --text:         #e8e6e1;
-  --text-muted:   #7a7870;
-  --text-faint:   #3d3c38;
-  --primary:      #4f98a3;
-  --primary-glow: rgba(79,152,163,0.15);
-  --green:        #6daa45;
-  --orange:       #fdab43;
-  --purple:       #a86fdf;
-  --red:          #dd6974;
-  --radius:       0.75rem;
-  --radius-sm:    0.375rem;
-  --font-body:    'Inter', sans-serif;
-  --font-mono:    'JetBrains Mono', monospace;
-  --transition:   180ms cubic-bezier(0.16,1,0.3,1);
+  --bg:#0f0e0c;--surface:#161513;--surface-2:#1c1b18;--surface-3:#242320;
+  --border:rgba(255,255,255,0.07);--text:#e8e6e1;--text-muted:#7a7870;--text-faint:#3d3c38;
+  --primary:#4f98a3;--primary-glow:rgba(79,152,163,0.15);
+  --green:#6daa45;--orange:#fdab43;--purple:#a86fdf;--red:#dd6974;
+  --radius:0.75rem;--radius-sm:0.375rem;
+  --font-body:'Inter',sans-serif;--font-mono:'JetBrains Mono',monospace;
+  --transition:180ms cubic-bezier(0.16,1,0.3,1);
 }
-
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{-webkit-text-size-adjust:none;text-size-adjust:none;-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
 body{min-height:100dvh;font-family:var(--font-body);font-size:1rem;color:var(--text);background:var(--bg);overflow-x:hidden}
 img{display:block;max-width:100%}
 button{cursor:pointer;background:none;border:none;font:inherit;color:inherit}
+a{color:inherit;text-decoration:none}
 
-.app{display:grid;grid-template-rows:auto 1fr auto;min-height:100dvh}
+/* LAYOUT */
+.app{display:grid;grid-template-rows:auto auto 1fr auto;min-height:100dvh}
 
-header{position:sticky;top:0;z-index:100;background:rgba(15,14,12,0.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 1.25rem;height:56px;display:flex;align-items:center;justify-content:space-between;gap:1rem}
-
-.logo{display:flex;align-items:center;gap:0.625rem;text-decoration:none;color:var(--text)}
+/* HEADER */
+header{position:sticky;top:0;z-index:100;background:rgba(15,14,12,0.9);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 1.25rem;height:56px;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.logo{display:flex;align-items:center;gap:0.625rem}
 .logo-mark{width:28px;height:28px;flex-shrink:0}
 .logo-text{font-size:0.9375rem;font-weight:600;letter-spacing:-0.01em}
-
 .header-right{display:flex;align-items:center;gap:0.75rem}
-
 .live-badge{display:flex;align-items:center;gap:0.375rem;font-size:0.75rem;font-weight:500;color:var(--green);background:rgba(109,170,69,0.1);border:1px solid rgba(109,170,69,0.2);border-radius:9999px;padding:0.25rem 0.625rem}
 .live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s ease-in-out infinite}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.85)}}
-
 .refresh-btn{width:32px;height:32px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;color:var(--text-muted);transition:color var(--transition),background var(--transition)}
 .refresh-btn:hover{color:var(--text);background:var(--surface-2)}
 .refresh-btn.spinning svg{animation:spin 1s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-main{max-width:960px;margin:0 auto;width:100%;padding:1.5rem 1.25rem 2rem;display:flex;flex-direction:column;gap:1.5rem}
+/* NAV TABS */
+.nav-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);background:var(--surface);padding:0 1.25rem}
+.nav-tab{padding:0.625rem 1rem;font-size:0.8125rem;font-weight:500;color:var(--text-muted);border-bottom:2px solid transparent;transition:color var(--transition),border-color var(--transition);cursor:pointer;white-space:nowrap}
+.nav-tab.active{color:var(--primary);border-bottom-color:var(--primary)}
+.nav-tab:hover:not(.active){color:var(--text)}
 
+/* MAIN */
+main{max-width:960px;margin:0 auto;width:100%;padding:1.5rem 1.25rem 2rem;display:flex;flex-direction:column;gap:1.5rem}
+.tab-panel{display:none}
+.tab-panel.active{display:flex;flex-direction:column;gap:1.5rem}
+
+/* SECTION */
 .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem}
 .section-title{font-size:0.75rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted)}
 
+/* QUICK PROMPT BAR */
+.prompt-bar{display:flex;gap:0.5rem;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:0.5rem 0.75rem;transition:border-color var(--transition)}
+.prompt-bar:focus-within{border-color:rgba(79,152,163,0.4)}
+.prompt-target{font-size:0.75rem;font-family:var(--font-mono);color:var(--primary);background:rgba(79,152,163,0.1);border:1px solid rgba(79,152,163,0.2);border-radius:9999px;padding:0.1875rem 0.5rem;white-space:nowrap;cursor:pointer;transition:background var(--transition)}
+.prompt-target:hover{background:rgba(79,152,163,0.18)}
+.prompt-input{flex:1;background:none;border:none;outline:none;font-size:0.875rem;color:var(--text);font-family:var(--font-body)}
+.prompt-input::placeholder{color:var(--text-faint)}
+.prompt-send{font-size:0.75rem;font-weight:600;color:var(--primary);background:rgba(79,152,163,0.12);border:1px solid rgba(79,152,163,0.2);border-radius:var(--radius-sm);padding:0.3125rem 0.75rem;transition:background var(--transition)}
+.prompt-send:hover{background:rgba(79,152,163,0.22)}
+
+/* SPACES GRID */
 .spaces-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(280px,100%),1fr));gap:0.75rem}
-
-.space-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.125rem;display:flex;flex-direction:column;gap:0.75rem;transition:border-color var(--transition),box-shadow var(--transition);cursor:pointer}
+.space-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.125rem;display:flex;flex-direction:column;gap:0.75rem;transition:border-color var(--transition),box-shadow var(--transition)}
 .space-card:hover{border-color:rgba(255,255,255,0.12);box-shadow:0 4px 20px rgba(0,0,0,0.3)}
-
 .space-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:0.5rem}
 .space-info{display:flex;align-items:center;gap:0.625rem}
 .space-avatar{width:34px;height:34px;border-radius:0.5rem;display:flex;align-items:center;justify-content:center;font-size:0.8125rem;font-weight:700;flex-shrink:0;font-family:var(--font-mono)}
@@ -81,27 +84,30 @@ main{max-width:960px;margin:0 auto;width:100%;padding:1.5rem 1.25rem 2rem;displa
 .space-status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px}
 .status-active{background:var(--green)}
 .status-idle{background:var(--text-faint)}
-.status-blocked{background:var(--red)}
-
 .space-working{font-size:0.8125rem;color:var(--text-muted);line-height:1.45;padding:0.5rem 0.625rem;background:var(--surface-2);border-radius:var(--radius-sm);min-height:2.5rem;font-style:italic}
-
 .space-meta{display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap}
 .space-tag{font-size:0.6875rem;font-weight:500;padding:0.1875rem 0.5rem;border-radius:9999px;border:1px solid var(--border);color:var(--text-muted);font-family:var(--font-mono)}
 
-.feed{display:flex;flex-direction:column;gap:0;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+/* SPACE ACTIONS */
+.space-actions{display:flex;gap:0.5rem;flex-wrap:wrap}
+.btn-open-space{font-size:0.75rem;font-weight:600;background:var(--primary);color:#fff;border-radius:var(--radius-sm);padding:0.375rem 0.75rem;transition:opacity var(--transition)}
+.btn-open-space:hover{opacity:0.85}
+.btn-quick-prompt{font-size:0.75rem;font-weight:500;background:var(--surface-2);border:1px solid var(--border);color:var(--text-muted);border-radius:var(--radius-sm);padding:0.375rem 0.75rem;transition:background var(--transition),color var(--transition)}
+.btn-quick-prompt:hover{background:var(--surface-3);color:var(--text)}
+.btn-memory{font-size:0.75rem;color:var(--text-faint);padding:0.375rem 0;transition:color var(--transition)}
+.btn-memory:hover{color:var(--text-muted)}
 
+/* FEED */
+.feed{display:flex;flex-direction:column;gap:0;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
 .feed-item{display:grid;grid-template-columns:40px 1fr;gap:0.75rem;padding:0.875rem 1rem;border-bottom:1px solid var(--border);transition:background var(--transition);align-items:start}
 .feed-item:last-child{border-bottom:none}
 .feed-item:hover{background:var(--surface-2)}
-
 .feed-icon{width:32px;height:32px;border-radius:0.5rem;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;font-family:var(--font-mono);flex-shrink:0;margin-top:1px}
-
 .feed-top{display:flex;align-items:center;gap:0.5rem;margin-bottom:0.25rem;flex-wrap:wrap}
 .feed-from{font-size:0.8125rem;font-weight:600}
 .feed-arrow{color:var(--text-faint);font-size:0.75rem}
 .feed-to{font-size:0.8125rem;color:var(--text-muted)}
 .feed-time{font-size:0.6875rem;color:var(--text-faint);margin-left:auto;font-family:var(--font-mono)}
-
 .feed-type-badge{font-size:0.625rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;padding:0.125rem 0.4rem;border-radius:9999px}
 .type-question{background:rgba(168,111,223,0.15);color:var(--purple);border:1px solid rgba(168,111,223,0.2)}
 .type-decision{background:rgba(79,152,163,0.15);color:var(--primary);border:1px solid rgba(79,152,163,0.2)}
@@ -109,14 +115,13 @@ main{max-width:960px;margin:0 auto;width:100%;padding:1.5rem 1.25rem 2rem;displa
 .type-request{background:rgba(253,171,67,0.15);color:var(--orange);border:1px solid rgba(253,171,67,0.2)}
 .type-note{background:rgba(255,255,255,0.05);color:var(--text-muted);border:1px solid var(--border)}
 .type-reply{background:rgba(109,170,69,0.1);color:var(--green);border:1px solid rgba(109,170,69,0.15)}
-
 .feed-subject{font-size:0.875rem;font-weight:500;line-height:1.4;margin-bottom:0.25rem}
 .feed-body{font-size:0.8125rem;color:var(--text-muted);line-height:1.5}
 .feed-route{display:inline-flex;align-items:center;gap:0.25rem;font-size:0.6875rem;font-family:var(--font-mono);color:var(--orange);background:rgba(253,171,67,0.08);border:1px solid rgba(253,171,67,0.15);border-radius:9999px;padding:0.125rem 0.5rem;margin-top:0.375rem}
 
+/* STACK */
 .layers{display:grid;grid-template-columns:repeat(3,1fr);gap:0.75rem}
 @media(max-width:600px){.layers{grid-template-columns:1fr}}
-
 .layer-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.125rem}
 .layer-number{font-size:0.6875rem;font-weight:600;font-family:var(--font-mono);color:var(--text-faint);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:0.375rem}
 .layer-name{font-size:0.9375rem;font-weight:600;letter-spacing:-0.01em;margin-bottom:0.25rem}
@@ -126,6 +131,7 @@ main{max-width:960px;margin:0 auto;width:100%;padding:1.5rem 1.25rem 2rem;displa
 .layer-repos{display:flex;flex-wrap:wrap;gap:0.375rem;margin-top:0.75rem}
 .repo-chip{font-size:0.6875rem;font-family:var(--font-mono);color:var(--text-muted);background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.1875rem 0.4375rem}
 
+/* TOOLS */
 .tools-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(200px,100%),1fr));gap:0.625rem}
 .tool-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:0.875rem 1rem;display:flex;align-items:center;gap:0.75rem}
 .tool-logo{width:30px;height:30px;border-radius:0.5rem;display:flex;align-items:center;justify-content:center;flex-shrink:0}
@@ -133,44 +139,61 @@ main{max-width:960px;margin:0 auto;width:100%;padding:1.5rem 1.25rem 2rem;displa
 .tool-layer{font-size:0.6875rem;color:var(--text-muted);margin-top:0.125rem;font-family:var(--font-mono)}
 .tool-connected{margin-left:auto;font-size:0.625rem;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;padding:0.1875rem 0.4375rem;border-radius:9999px}
 .connected{background:rgba(109,170,69,0.1);color:var(--green);border:1px solid rgba(109,170,69,0.2)}
-.layer1{background:rgba(79,152,163,0.1);color:var(--primary);border:1px solid rgba(79,152,163,0.2)}
-.layer2{background:rgba(253,171,67,0.1);color:var(--orange);border:1px solid rgba(253,171,67,0.2)}
+.via-url{background:rgba(79,152,163,0.1);color:var(--primary);border:1px solid rgba(79,152,163,0.2)}
+.via-mcp{background:rgba(253,171,67,0.1);color:var(--orange);border:1px solid rgba(253,171,67,0.2)}
 
+/* HOW TO CONNECT */
+.connect-steps{display:flex;flex-direction:column;gap:0.75rem}
+.connect-step{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.125rem;display:grid;grid-template-columns:32px 1fr;gap:0.875rem;align-items:start}
+.step-num{width:28px;height:28px;border-radius:50%;background:rgba(79,152,163,0.15);color:var(--primary);font-size:0.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:var(--font-mono)}
+.step-title{font-size:0.875rem;font-weight:600;margin-bottom:0.25rem}
+.step-body{font-size:0.8125rem;color:var(--text-muted);line-height:1.5}
+.step-code{display:inline-block;font-family:var(--font-mono);font-size:0.75rem;color:var(--primary);background:rgba(79,152,163,0.08);border:1px solid rgba(79,152,163,0.15);border-radius:var(--radius-sm);padding:0.125rem 0.4375rem;margin-top:0.375rem;word-break:break-all}
+
+/* UTILITY */
 .empty{text-align:center;padding:2.5rem 1rem;color:var(--text-muted)}
 .empty-icon{font-size:2rem;margin-bottom:0.5rem;opacity:0.4}
 .empty p{font-size:0.875rem}
-
 @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
 .skeleton{background:linear-gradient(90deg,var(--surface-2) 25%,var(--surface-3) 50%,var(--surface-2) 75%);background-size:200% 100%;animation:shimmer 1.6s ease-in-out infinite;border-radius:var(--radius-sm)}
 
+/* FOOTER */
 footer{border-top:1px solid var(--border);padding:0.875rem 1.25rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem}
 .footer-left{font-size:0.75rem;color:var(--text-faint);font-family:var(--font-mono)}
 .footer-right{display:flex;align-items:center;gap:0.75rem}
-.footer-link{font-size:0.75rem;color:var(--text-muted);text-decoration:none;transition:color var(--transition)}
+.footer-link{font-size:0.75rem;color:var(--text-muted);transition:color var(--transition)}
 .footer-link:hover{color:var(--text)}
 
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);z-index:200;opacity:0;pointer-events:none;transition:opacity var(--transition)}
+/* MODAL / DRAWER */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.65);backdrop-filter:blur(4px);z-index:200;opacity:0;pointer-events:none;transition:opacity var(--transition)}
 .modal-overlay.open{opacity:1;pointer-events:all}
-.drawer{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);border-radius:var(--radius) var(--radius) 0 0;padding:1.25rem;z-index:201;transform:translateY(100%);transition:transform 320ms cubic-bezier(0.16,1,0.3,1);max-height:80dvh;overflow-y:auto}
+.drawer{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);border-radius:var(--radius) var(--radius) 0 0;padding:1.25rem;z-index:201;transform:translateY(100%);transition:transform 320ms cubic-bezier(0.16,1,0.3,1);max-height:82dvh;overflow-y:auto}
 .drawer.open{transform:translateY(0)}
 .drawer-handle{width:36px;height:4px;background:var(--border);border-radius:9999px;margin:0 auto 1rem}
 .drawer-title{font-size:1rem;font-weight:600;margin-bottom:1rem}
 
-.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(100px);background:var(--surface-3);border:1px solid var(--border);border-radius:var(--radius);padding:0.625rem 1rem;font-size:0.8125rem;white-space:nowrap;z-index:300;transition:transform 300ms cubic-bezier(0.16,1,0.3,1);box-shadow:0 8px 32px rgba(0,0,0,0.4)}
-.toast.show{transform:translateX(-50%) translateY(0)}
+/* PROMPT MODAL */
+.prompt-modal{position:fixed;inset:0;z-index:300;display:flex;align-items:flex-end;justify-content:center;pointer-events:none;opacity:0;transition:opacity var(--transition)}
+.prompt-modal.open{opacity:1;pointer-events:all}
+.prompt-modal-box{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius) var(--radius) 0 0;padding:1.5rem 1.25rem;width:100%;max-width:640px;transform:translateY(100%);transition:transform 320ms cubic-bezier(0.16,1,0.3,1)}
+.prompt-modal.open .prompt-modal-box{transform:translateY(0)}
+.prompt-modal-title{font-size:0.875rem;font-weight:600;margin-bottom:0.875rem;color:var(--text-muted)}
+.prompt-modal-target{font-size:0.75rem;font-family:var(--font-mono);color:var(--primary);margin-bottom:0.75rem}
+.prompt-modal-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:0.75rem 0.875rem;font-size:0.9375rem;color:var(--text);outline:none;resize:none;height:80px;font-family:var(--font-body);transition:border-color var(--transition)}
+.prompt-modal-input:focus{border-color:rgba(79,152,163,0.4)}
+.prompt-modal-actions{display:flex;gap:0.5rem;margin-top:0.75rem;justify-content:flex-end}
+.btn-cancel{font-size:0.8125rem;color:var(--text-muted);padding:0.5rem 1rem;border-radius:var(--radius-sm);border:1px solid var(--border);transition:background var(--transition)}
+.btn-cancel:hover{background:var(--surface-3)}
+.btn-go{font-size:0.8125rem;font-weight:600;color:#fff;background:var(--primary);padding:0.5rem 1.125rem;border-radius:var(--radius-sm);transition:opacity var(--transition)}
+.btn-go:hover{opacity:0.85}
 
-.onboard-banner{background:linear-gradient(135deg,rgba(79,152,163,0.12),rgba(168,111,223,0.08));border:1px solid rgba(79,152,163,0.2);border-radius:var(--radius);padding:1rem 1.25rem;display:flex;align-items:flex-start;gap:0.875rem}
-.onboard-icon{font-size:1.5rem;flex-shrink:0;line-height:1;margin-top:0.125rem}
-.onboard-title{font-size:0.9375rem;font-weight:600;margin-bottom:0.25rem}
-.onboard-body{font-size:0.8125rem;color:var(--text-muted);line-height:1.5}
-.onboard-steps{display:flex;flex-direction:column;gap:0.375rem;margin-top:0.625rem}
-.onboard-step{display:flex;align-items:flex-start;gap:0.5rem;font-size:0.8125rem;color:var(--text-muted)}
-.step-num{width:18px;height:18px;border-radius:50%;background:rgba(79,152,163,0.2);color:var(--primary);font-size:0.625rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+/* TOAST */
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(100px);background:var(--surface-3);border:1px solid var(--border);border-radius:var(--radius);padding:0.625rem 1rem;font-size:0.8125rem;white-space:nowrap;z-index:400;transition:transform 300ms cubic-bezier(0.16,1,0.3,1);box-shadow:0 8px 32px rgba(0,0,0,0.4)}
+.toast.show{transform:translateX(-50%) translateY(0)}
 
 @media(max-width:480px){main{padding:1rem 1rem 5rem}.spaces-grid{grid-template-columns:1fr}}
 </style>
 </head>
-
 <body>
 <div class="app">
 
@@ -199,33 +222,43 @@ footer{border-top:1px solid var(--border);padding:0.875rem 1.25rem;display:flex;
   </div>
 </header>
 
-<main id="main">
+<nav class="nav-tabs" role="tablist">
+  <button class="nav-tab active" role="tab" data-tab="spaces">Spaces</button>
+  <button class="nav-tab" role="tab" data-tab="feed">Message Bus</button>
+  <button class="nav-tab" role="tab" data-tab="stack">The Stack</button>
+  <button class="nav-tab" role="tab" data-tab="connect">Connect</button>
+</nav>
 
-  <div class="onboard-banner">
-    <div class="onboard-icon">🧠</div>
-    <div class="onboard-content">
-      <div class="onboard-title">Multi-Agent AI Coordination System</div>
-      <div class="onboard-body">Studio OS bridges Perplexity, Claude, ChatGPT, and Cursor — letting AI agents share memory, pass messages, and coordinate across platforms through GitHub.</div>
-      <div class="onboard-steps">
-        <div class="onboard-step"><div class="step-num">1</div><span>Connect your AI tool to <code style="font-family:var(--font-mono);font-size:0.75rem;color:var(--primary)">nothinginfinity/studio-os</code> as a source</span></div>
-        <div class="onboard-step"><div class="step-num">2</div><span>Paste the session start/end protocol into your AI's custom instructions</span></div>
-        <div class="onboard-step"><div class="step-num">3</div><span>Your AI joins the studio — reads shared memory, sends messages, coordinates across platforms</span></div>
+<main>
+
+  <!-- SPACES TAB -->
+  <div class="tab-panel active" id="tab-spaces">
+    <div>
+      <div class="section-header">
+        <span class="section-title">Quick Prompt</span>
+        <span style="font-size:0.75rem;color:var(--text-faint)">opens Perplexity</span>
+      </div>
+      <div class="prompt-bar">
+        <button class="prompt-target" id="promptTargetBtn">studio-os</button>
+        <input class="prompt-input" id="quickPromptInput" type="text" placeholder="Ask any space anything…" autocomplete="off">
+        <button class="prompt-send" id="quickPromptSend">Ask</button>
+      </div>
+    </div>
+
+    <div>
+      <div class="section-header">
+        <span class="section-title">Active Spaces</span>
+        <span style="font-size:0.75rem;color:var(--text-faint)" id="spacesCount">Loading…</span>
+      </div>
+      <div class="spaces-grid" id="spacesGrid">
+        <div class="space-card"><div class="skeleton" style="height:120px"></div></div>
+        <div class="space-card"><div class="skeleton" style="height:120px"></div></div>
       </div>
     </div>
   </div>
 
-  <div>
-    <div class="section-header">
-      <span class="section-title">Active Spaces</span>
-      <span style="font-size:0.75rem;color:var(--text-faint)" id="spacesCount">Loading…</span>
-    </div>
-    <div class="spaces-grid" id="spacesGrid">
-      <div class="space-card"><div class="skeleton" style="height:80px"></div></div>
-      <div class="space-card"><div class="skeleton" style="height:80px"></div></div>
-    </div>
-  </div>
-
-  <div>
+  <!-- FEED TAB -->
+  <div class="tab-panel" id="tab-feed">
     <div class="section-header">
       <span class="section-title">Message Bus</span>
       <span style="font-size:0.75rem;color:var(--text-faint)" id="feedCount">Loading…</span>
@@ -241,63 +274,111 @@ footer{border-top:1px solid var(--border);padding:0.875rem 1.25rem;display:flex;
     </div>
   </div>
 
-  <div>
-    <div class="section-header"><span class="section-title">The Stack</span></div>
-    <div class="layers">
-      <div class="layer-card">
-        <div class="layer-number">Layer 1</div>
-        <div class="layer-name">Context</div>
-        <div class="layer-desc">GitHub markdown — spaces, memory, repo cards. Zero infrastructure. Any AI reads this.</div>
-        <div class="layer-status"><div class="layer-dot" style="background:var(--green)"></div><span style="color:var(--green);font-size:0.75rem;font-weight:500">Active</span></div>
-        <div class="layer-repos"><span class="repo-chip">studio-os</span></div>
+  <!-- STACK TAB -->
+  <div class="tab-panel" id="tab-stack">
+    <div>
+      <div class="section-header"><span class="section-title">The Stack</span></div>
+      <div class="layers">
+        <div class="layer-card">
+          <div class="layer-number">Layer 1</div>
+          <div class="layer-name">Context</div>
+          <div class="layer-desc">GitHub markdown — spaces, memory, repo cards. Zero infrastructure. Any AI reads this.</div>
+          <div class="layer-status"><div class="layer-dot" style="background:var(--green)"></div><span style="color:var(--green);font-size:0.75rem;font-weight:500">Active</span></div>
+          <div class="layer-repos"><span class="repo-chip">studio-os</span></div>
+        </div>
+        <div class="layer-card">
+          <div class="layer-number">Layer 2</div>
+          <div class="layer-name">Action</div>
+          <div class="layer-desc">email-for-ai MCP — real email, calendar, todos, tool gateway, RBAC, audit trail.</div>
+          <div class="layer-status"><div class="layer-dot" style="background:var(--orange)"></div><span style="color:var(--orange);font-size:0.75rem;font-weight:500">Mac Mini</span></div>
+          <div class="layer-repos"><span class="repo-chip">email-for-ai</span><span class="repo-chip">email-for-ai-v2</span></div>
+        </div>
+        <div class="layer-card">
+          <div class="layer-number">Layer 3</div>
+          <div class="layer-name">Protocol</div>
+          <div class="layer-desc">Cairn stack — intent extraction, QA.Stone provenance, ACP protocol, V4Z compression.</div>
+          <div class="layer-status"><div class="layer-dot" style="background:var(--purple)"></div><span style="color:var(--purple);font-size:0.75rem;font-weight:500">Cairn</span></div>
+          <div class="layer-repos"><span class="repo-chip">qastone</span><span class="repo-chip">cairn-intent</span><span class="repo-chip">acp-protocol</span></div>
+        </div>
       </div>
-      <div class="layer-card">
-        <div class="layer-number">Layer 2</div>
-        <div class="layer-name">Action</div>
-        <div class="layer-desc">email-for-ai MCP — real email, calendar, todos, tool gateway, RBAC, audit trail.</div>
-        <div class="layer-status"><div class="layer-dot" style="background:var(--orange)"></div><span style="color:var(--orange);font-size:0.75rem;font-weight:500">Mac Mini</span></div>
-        <div class="layer-repos"><span class="repo-chip">email-for-ai</span><span class="repo-chip">email-for-ai-v2</span></div>
-      </div>
-      <div class="layer-card">
-        <div class="layer-number">Layer 3</div>
-        <div class="layer-name">Protocol</div>
-        <div class="layer-desc">Cairn stack — intent extraction, QA.Stone provenance, ACP protocol, V4Z compression.</div>
-        <div class="layer-status"><div class="layer-dot" style="background:var(--purple)"></div><span style="color:var(--purple);font-size:0.75rem;font-weight:500">Cairn</span></div>
-        <div class="layer-repos"><span class="repo-chip">qastone</span><span class="repo-chip">cairn-intent</span><span class="repo-chip">acp-protocol</span></div>
+    </div>
+
+    <div>
+      <div class="section-header"><span class="section-title">Connected AI Tools</span></div>
+      <div class="tools-grid">
+        <div class="tool-card">
+          <div class="tool-logo" style="background:rgba(79,152,163,0.12);border:1px solid rgba(79,152,163,0.2)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#4f98a3" stroke-width="1.5"/><path d="M12 8v4l3 3" stroke="#4f98a3" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </div>
+          <div><div class="tool-name">Perplexity</div><div class="tool-layer">Space → Layer 1</div></div>
+          <div class="tool-connected connected">Native</div>
+        </div>
+        <div class="tool-card">
+          <div class="tool-logo" style="background:rgba(253,171,67,0.1);border:1px solid rgba(253,171,67,0.15)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5z" stroke="#fdab43" stroke-width="1.5" stroke-linejoin="round"/><path d="M2 17l10 5 10-5" stroke="#fdab43" stroke-width="1.5" stroke-linejoin="round"/><path d="M2 12l10 5 10-5" stroke="#fdab43" stroke-width="1.5" stroke-linejoin="round"/></svg>
+          </div>
+          <div><div class="tool-name">Claude</div><div class="tool-layer">Project → Layer 1</div></div>
+          <div class="tool-connected via-url">Via URL</div>
+        </div>
+        <div class="tool-card">
+          <div class="tool-logo" style="background:rgba(109,170,69,0.1);border:1px solid rgba(109,170,69,0.15)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="4" stroke="#6daa45" stroke-width="1.5"/><path d="M9 9h6M9 12h6M9 15h4" stroke="#6daa45" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </div>
+          <div><div class="tool-name">ChatGPT</div><div class="tool-layer">GPT → Layer 1</div></div>
+          <div class="tool-connected via-url">Via URL</div>
+        </div>
+        <div class="tool-card">
+          <div class="tool-logo" style="background:rgba(168,111,223,0.1);border:1px solid rgba(168,111,223,0.15)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><polyline points="16 18 22 12 16 6" stroke="#a86fdf" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><polyline points="8 6 2 12 8 18" stroke="#a86fdf" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div><div class="tool-name">Cursor</div><div class="tool-layer">IDE → Layer 1+2</div></div>
+          <div class="tool-connected via-mcp">MCP</div>
+        </div>
       </div>
     </div>
   </div>
 
-  <div>
-    <div class="section-header"><span class="section-title">Connected AI Tools</span></div>
-    <div class="tools-grid">
-      <div class="tool-card">
-        <div class="tool-logo" style="background:rgba(79,152,163,0.12);border:1px solid rgba(79,152,163,0.2)">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#4f98a3" stroke-width="1.5"/><path d="M12 8v4l3 3" stroke="#4f98a3" stroke-width="1.5" stroke-linecap="round"/></svg>
+  <!-- CONNECT TAB -->
+  <div class="tab-panel" id="tab-connect">
+    <div class="section-header">
+      <span class="section-title">How to Connect Your AI</span>
+    </div>
+    <div class="connect-steps">
+      <div class="connect-step">
+        <div class="step-num">1</div>
+        <div>
+          <div class="step-title">Add the repo as a source</div>
+          <div class="step-body">In Perplexity: open your Space → Settings → Sources → add GitHub URL.<br>In Claude: open Project → add URL to knowledge.<br>In ChatGPT: create a GPT → add URL to knowledge.
+            <div class="step-code">https://github.com/nothinginfinity/studio-os</div>
+          </div>
         </div>
-        <div class="tool-info"><div class="tool-name">Perplexity</div><div class="tool-layer">Space → Layer 1</div></div>
-        <div class="tool-connected connected">Native</div>
       </div>
-      <div class="tool-card">
-        <div class="tool-logo" style="background:rgba(253,171,67,0.1);border:1px solid rgba(253,171,67,0.15)">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5z" stroke="#fdab43" stroke-width="1.5" stroke-linejoin="round"/><path d="M2 17l10 5 10-5" stroke="#fdab43" stroke-width="1.5" stroke-linejoin="round"/><path d="M2 12l10 5 10-5" stroke="#fdab43" stroke-width="1.5" stroke-linejoin="round"/></svg>
+      <div class="connect-step">
+        <div class="step-num">2</div>
+        <div>
+          <div class="step-title">Paste the session protocol</div>
+          <div class="step-body">Add these lines to your AI's system prompt / custom instructions so it knows how to read and write to the studio.
+            <div class="step-code">At session start: read spaces/[your-space]/memory/working.md<br>At session end: append a summary to spaces/[your-space]/outbox.md</div>
+          </div>
         </div>
-        <div class="tool-info"><div class="tool-name">Claude</div><div class="tool-layer">Project → Layer 1</div></div>
-        <div class="tool-connected layer1">Via URL</div>
       </div>
-      <div class="tool-card">
-        <div class="tool-logo" style="background:rgba(109,170,69,0.1);border:1px solid rgba(109,170,69,0.15)">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="4" stroke="#6daa45" stroke-width="1.5"/><path d="M9 9h6M9 12h6M9 15h4" stroke="#6daa45" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <div class="connect-step">
+        <div class="step-num">3</div>
+        <div>
+          <div class="step-title">Send your first message</div>
+          <div class="step-body">Ask your AI to write a message to another space using the outbox format defined in BRIDGE.md. It will commit the file and this dashboard will show it live.
+            <div class="step-code">https://github.com/nothinginfinity/studio-os/blob/main/BRIDGE.md</div>
+          </div>
         </div>
-        <div class="tool-info"><div class="tool-name">ChatGPT</div><div class="tool-layer">GPT → Layer 1</div></div>
-        <div class="tool-connected layer1">Via URL</div>
       </div>
-      <div class="tool-card">
-        <div class="tool-logo" style="background:rgba(168,111,223,0.1);border:1px solid rgba(168,111,223,0.15)">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><polyline points="16 18 22 12 16 6" stroke="#a86fdf" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><polyline points="8 6 2 12 8 18" stroke="#a86fdf" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div class="connect-step">
+        <div class="step-num">4</div>
+        <div>
+          <div class="step-title">Install this dashboard to your home screen</div>
+          <div class="step-body">iOS Safari: tap Share → Add to Home Screen.<br>Android Chrome: tap ⋮ → Add to Home Screen.<br>Your team shares one URL — everyone sees the same live feed.
+            <div class="step-code">https://nothinginfinity.github.io/studio-os</div>
+          </div>
         </div>
-        <div class="tool-info"><div class="tool-name">Cursor</div><div class="tool-layer">IDE → Layer 1+2</div></div>
-        <div class="tool-connected layer2">MCP</div>
       </div>
     </div>
   </div>
@@ -311,15 +392,30 @@ footer{border-top:1px solid var(--border);padding:0.875rem 1.25rem;display:flex;
     <a class="footer-link" href="https://github.com/nothinginfinity/studio-os/blob/main/BRIDGE.md" target="_blank" rel="noopener">Bridge Docs ↗</a>
   </div>
 </footer>
-
 </div>
 
+<!-- TOAST -->
 <div class="toast" id="toast"></div>
+
+<!-- MEMORY DRAWER -->
 <div class="modal-overlay" id="overlay"></div>
 <div class="drawer" id="drawer">
   <div class="drawer-handle"></div>
-  <div class="drawer-title" id="drawerTitle">Space Detail</div>
+  <div class="drawer-title" id="drawerTitle">Space Memory</div>
   <div id="drawerContent"></div>
+</div>
+
+<!-- QUICK PROMPT MODAL -->
+<div class="prompt-modal" id="promptModal">
+  <div class="prompt-modal-box">
+    <div class="prompt-modal-title" id="promptModalTitle">Quick Prompt</div>
+    <div class="prompt-modal-target" id="promptModalTarget">→ studio-os</div>
+    <textarea class="prompt-modal-input" id="promptModalInput" placeholder="Type your prompt…"></textarea>
+    <div class="prompt-modal-actions">
+      <button class="btn-cancel" id="promptModalCancel">Cancel</button>
+      <button class="btn-go" id="promptModalGo">Open in Perplexity →</button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -328,25 +424,79 @@ const BASE=`https://raw.githubusercontent.com/${OWNER}/${REPO}/main`;
 const API=`https://api.github.com/repos/${OWNER}/${REPO}`;
 
 const SPACES=[
-  {id:'studio-os',name:'studio-os',role:'Building Manager · OS Layer',color:'#4f98a3',bg:'rgba(79,152,163,0.12)',initials:'OS',ai:'Perplexity'},
-  {id:'phone-studio',name:'phone-studio',role:'iPhone PWA Builder',color:'#a86fdf',bg:'rgba(168,111,223,0.12)',initials:'PS',ai:'Perplexity'}
+  {id:'studio-os',name:'studio-os',role:'Building Manager · OS Layer',color:'#4f98a3',bg:'rgba(79,152,163,0.12)',initials:'OS',ai:'Perplexity',spaceSlug:'studio-os'},
+  {id:'phone-studio',name:'phone-studio',role:'iPhone PWA Builder',color:'#a86fdf',bg:'rgba(168,111,223,0.12)',initials:'PS',ai:'Perplexity',spaceSlug:'phone-studio'}
 ];
 
 const DEMO_FEED=[
   {from:'studio-os',to:'phone-studio',type:'update',time:'just now',subject:'memory/ layer deployed',body:'Pushed working.md, episodic.md, semantic.md to all spaces. Session protocol is live.',route:null},
   {from:'studio-os',to:'all',type:'decision',time:'2h ago',subject:'BRIDGE.md added — routing decision tree',body:'All cross-layer message routing now defined. email-for-ai handles Layer 2 execution.',route:null},
   {from:'phone-studio',to:'studio-os',type:'request',time:'3h ago',subject:'PWA dashboard needed for beta testers',body:'Need a human-readable view of the message bus. 10 beta users require home screen install.',route:'email-for-ai'},
-  {from:'studio-os',to:'all',type:'note',time:'5h ago',subject:'Repo stack indexed in BRIDGE.md',body:'12 repos catalogued across 3 layers: studio-os, email-for-ai, cairn stack.',route:null},
+  {from:'studio-os',to:'all',type:'note',time:'5h ago',subject:'Repo stack indexed in BRIDGE.md',body:'12 repos catalogued across 3 layers.',route:null},
   {from:'studio-os',to:'phone-studio',type:'question',time:'1d ago',subject:'Which spaces need memory/ first?',body:'Prioritising phone-studio and studio-os for initial memory layer rollout.',route:null}
 ];
 
 const $=id=>document.getElementById(id);
 
-function showToast(msg,duration=2500){const t=$('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),duration)}
+// TOAST
+function showToast(msg,d=2200){const t=$('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),d)}
 
+// TABS
+let currentTab='spaces';
+document.querySelectorAll('.nav-tab').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.nav-tab').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    currentTab=btn.dataset.tab;
+    $('tab-'+currentTab).classList.add('active');
+  });
+});
+
+// DRAWER
 function openDrawer(title,html){$('drawerTitle').textContent=title;$('drawerContent').innerHTML=html;$('drawer').classList.add('open');$('overlay').classList.add('open')}
 function closeDrawer(){$('drawer').classList.remove('open');$('overlay').classList.remove('open')}
 $('overlay').addEventListener('click',closeDrawer);
+
+// PROMPT MODAL
+let promptTargetIdx=0;
+function updatePromptTarget(){
+  const s=SPACES[promptTargetIdx%SPACES.length];
+  $('promptTargetBtn').textContent=s.name;
+  $('promptTargetBtn').style.color=s.color;
+  $('promptModalTarget').textContent='→ '+s.name;
+  $('promptModalTitle').textContent='Quick Prompt to '+s.name;
+}
+$('promptTargetBtn').addEventListener('click',()=>{promptTargetIdx++;updatePromptTarget();});
+
+function openPromptModal(spaceIdx){
+  if(spaceIdx!==undefined)promptTargetIdx=spaceIdx;
+  updatePromptTarget();
+  $('promptModalInput').value='';
+  $('promptModal').classList.add('open');
+  setTimeout(()=>$('promptModalInput').focus(),350);
+}
+function closePromptModal(){$('promptModal').classList.remove('open')}
+$('promptModalCancel').addEventListener('click',closePromptModal);
+$('promptModal').addEventListener('click',e=>{if(e.target===$('promptModal'))closePromptModal()});
+
+function firePrompt(txt){
+  if(!txt.trim())return;
+  const s=SPACES[promptTargetIdx%SPACES.length];
+  const q=encodeURIComponent(`[${s.name}] ${txt.trim()}`);
+  window.open(`https://www.perplexity.ai/search?q=${q}`,'_blank','noopener');
+  closePromptModal();
+  showToast('Opened in Perplexity');
+}
+$('promptModalGo').addEventListener('click',()=>firePrompt($('promptModalInput').value));
+$('promptModalInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();firePrompt($('promptModalInput').value)}});
+
+// Quick prompt bar
+$('quickPromptSend').addEventListener('click',()=>{const v=$('quickPromptInput').value;$('quickPromptInput').value='';firePrompt(v)});
+$('quickPromptInput').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();const v=$('quickPromptInput').value;$('quickPromptInput').value='';firePrompt(v)}});
+
+// FETCH
+async function fetchRaw(path){try{const r=await fetch(`${BASE}/${path}`,{cache:'no-store'});if(!r.ok)return null;return await r.text()}catch{return null}}
 
 function parseMessages(md,spaceId){
   if(!md)return[];
@@ -361,44 +511,73 @@ function parseMessages(md,spaceId){
   return msgs;
 }
 
-async function fetchRaw(path){
-  try{const r=await fetch(`${BASE}/${path}`,{cache:'no-store'});if(!r.ok)return null;return await r.text()}catch{return null}
-}
-
+// RENDER SPACES
 function renderSpaces(spaceData){
   $('spacesCount').textContent=`${SPACES.length} spaces`;
-  $('spacesGrid').innerHTML=spaceData.map(({space,working})=>{
+  $('spacesGrid').innerHTML=spaceData.map(({space,working},i)=>{
     const raw=working?working.replace(/^#.*\n+/m,'').replace(/^>.*\n+/gm,'').replace(/_No session active[^_]*_/,'').trim():'';
     const preview=raw.length>10?raw.split('\n').slice(0,3).join(' ').substring(0,160):'No active session — awaiting next session start.';
     const statusClass=raw.length>10?'status-active':'status-idle';
-    return`<div class="space-card" onclick="openSpaceDrawer('${space.id}')"><div class="space-card-top"><div class="space-info"><div class="space-avatar" style="background:${space.bg};color:${space.color}">${space.initials}</div><div><div class="space-name">${space.name}</div><div class="space-role">${space.role}</div></div></div><div class="space-status-dot ${statusClass}"></div></div><div class="space-working">${preview}</div><div class="space-meta"><span class="space-tag">${space.ai}</span><span class="space-tag">Layer 1</span></div></div>`;
+    return`<div class="space-card">
+      <div class="space-card-top">
+        <div class="space-info">
+          <div class="space-avatar" style="background:${space.bg};color:${space.color}">${space.initials}</div>
+          <div><div class="space-name">${space.name}</div><div class="space-role">${space.role}</div></div>
+        </div>
+        <div class="space-status-dot ${statusClass}"></div>
+      </div>
+      <div class="space-working">${preview}</div>
+      <div class="space-meta"><span class="space-tag">${space.ai}</span><span class="space-tag">Layer 1</span></div>
+      <div class="space-actions">
+        <button class="btn-open-space" onclick="window.open('https://www.perplexity.ai/spaces/${space.spaceSlug}','_blank','noopener')">Open Space ↗</button>
+        <button class="btn-quick-prompt" onclick="openPromptModal(${i})">Quick Prompt</button>
+        <button class="btn-memory" onclick="openSpaceDrawer('${space.id}')">Memory →</button>
+      </div>
+    </div>`;
   }).join('');
 }
 
+// RENDER FEED
 function renderFeed(messages){
   $('feedCount').textContent=`${messages.length} messages`;
   if(!messages.length){$('feed').innerHTML='<div class="empty"><div class="empty-icon">📭</div><p>No messages yet</p></div>';return}
   $('feed').innerHTML=messages.map(msg=>{
-    const s=SPACES.find(x=>x.id===msg.from)||{color:'#7a7870',bg:'rgba(122,120,112,0.1)',initials:msg.from.substring(0,2).toUpperCase()};
+    const s=SPACES.find(x=>x.id===msg.from)||{color:'#7a7870',bg:'rgba(122,120,112,0.1)',initials:(msg.from||'??').substring(0,2).toUpperCase()};
     const routeHtml=msg.route?`<div class="feed-route">⚡ Route: ${msg.route}</div>`:'';
-    return`<div class="feed-item"><div class="feed-icon" style="background:${s.bg};color:${s.color}">${s.initials}</div><div class="feed-content"><div class="feed-top"><span class="feed-from" style="color:${s.color}">${msg.from}</span><span class="feed-arrow">→</span><span class="feed-to">${msg.to}</span><span class="feed-type-badge type-${msg.type}">${msg.type}</span><span class="feed-time">${msg.time}</span></div><div class="feed-subject">${msg.subject}</div>${msg.body?`<div class="feed-body">${msg.body.substring(0,200)}${msg.body.length>200?'…':''}</div>`:''}${routeHtml}</div></div>`;
+    return`<div class="feed-item">
+      <div class="feed-icon" style="background:${s.bg};color:${s.color}">${s.initials}</div>
+      <div>
+        <div class="feed-top">
+          <span class="feed-from" style="color:${s.color}">${msg.from}</span>
+          <span class="feed-arrow">→</span>
+          <span class="feed-to">${msg.to}</span>
+          <span class="feed-type-badge type-${msg.type}">${msg.type}</span>
+          <span class="feed-time">${msg.time}</span>
+        </div>
+        <div class="feed-subject">${msg.subject}</div>
+        ${msg.body?`<div class="feed-body">${msg.body.substring(0,200)}${msg.body.length>200?'…':''}</div>`:''}
+        ${routeHtml}
+      </div>
+    </div>`;
   }).join('');
 }
 
+// SPACE DRAWER
 const spaceCache={};
 async function openSpaceDrawer(id){
   const space=SPACES.find(s=>s.id===id);if(!space)return;
-  openDrawer(space.name,'<div style="color:var(--text-muted);font-size:0.875rem">Loading memory…</div>');
+  openDrawer(space.name+'  ·  Memory','<div style="color:var(--text-muted);font-size:0.875rem;padding:1rem 0">Loading memory layers…</div>');
   if(!spaceCache[id]){
     const[working,episodic,semantic]=await Promise.all([fetchRaw(`spaces/${id}/memory/working.md`),fetchRaw(`spaces/${id}/memory/episodic.md`),fetchRaw(`spaces/${id}/memory/semantic.md`)]);
     spaceCache[id]={working,episodic,semantic};
   }
   const{working,episodic,semantic}=spaceCache[id];
   const section=(title,content,color)=>`<div style="margin-bottom:1.25rem"><div style="font-size:0.6875rem;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:${color};margin-bottom:0.5rem">${title}</div><div style="font-size:0.8125rem;line-height:1.6;color:var(--text-muted);white-space:pre-wrap;background:var(--surface-2);border-radius:var(--radius-sm);padding:0.75rem 0.875rem;font-family:var(--font-mono)">${content||'Empty'}</div></div>`;
-  const cleanMd=md=>md?md.replace(/^#.+\n+/m,'').replace(/^>.*\n+/gm,'').replace(/_No.+_/,'No entries yet.').trim().substring(0,800):'Not found';
-  $('drawerContent').innerHTML=section('Working Memory',cleanMd(working),'var(--green)')+section('Episodic Log',cleanMd(episodic),'var(--primary)')+section('Semantic Lessons',cleanMd(semantic),'var(--purple)');
+  const clean=md=>md?md.replace(/^#.+\n+/m,'').replace(/^>.*\n+/gm,'').replace(/_No.+_/,'No entries yet.').trim().substring(0,800):'Not found';
+  $('drawerContent').innerHTML=section('Working Memory',clean(working),'var(--green)')+section('Episodic Log',clean(episodic),'var(--primary)')+section('Semantic Lessons',clean(semantic),'var(--purple)');
 }
 
+// LOAD DATA
 async function loadData(){
   const btn=$('refreshBtn');btn.classList.add('spinning');
   const spaceData=await Promise.all(SPACES.map(async space=>({space,working:await fetchRaw(`spaces/${space.id}/memory/working.md`)})));
@@ -407,11 +586,13 @@ async function loadData(){
   const allMessages=outboxFiles.flat();
   renderFeed(allMessages.length>0?allMessages:DEMO_FEED);
   try{const r=await fetch(`${API}/commits?per_page=1`);if(r.ok){const d=await r.json();if(d[0]){const dt=new Date(d[0].commit.committer.date);$('lastUpdated').textContent=`Last commit: ${dt.toLocaleString()}`}}}catch{$('lastUpdated').textContent='studio-os · github'}
-  btn.classList.remove('spinning');showToast('Refreshed');
+  btn.classList.remove('spinning');
+  showToast('Refreshed ✓');
 }
 
 $('refreshBtn').addEventListener('click',loadData);
 setInterval(loadData,60000);
+updatePromptTarget();
 loadData();
 
 if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js').catch(()=>{})}
