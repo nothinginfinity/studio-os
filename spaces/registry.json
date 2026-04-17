@@ -21,6 +21,17 @@
       "ai": "Perplexity",
       "url": "https://www.perplexity.ai/collections/phone-studio-4Lol29ljTsyacjBNZLGB6g",
       "notes": "Real URL confirmed"
+    },
+    {
+      "id": "phone-studio-game",
+      "name": "phone-studio-game",
+      "role": "Game PWA Builder · sub-space of phone-studio",
+      "color": "#da7101",
+      "bg": "rgba(218,113,1,0.12)",
+      "initials": "PG",
+      "ai": "Perplexity",
+      "url": "https://github.com/nothinginfinity/phone-studio-game",
+      "notes": "Update url with your real Perplexity Space link when created"
     }
   ],
   "_instructions": "To add a new space: copy any entry above, update id/name/role/color/initials/url. The dashboard reads this file live — no code changes needed. Get your Space URL from Perplexity → open Space → copy URL from browser bar."
