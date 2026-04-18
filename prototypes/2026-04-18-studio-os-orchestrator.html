@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Studio OS Orchestrator</title>
+  <meta name="theme-color" content="#171614" />
+  <!--
+    Studio OS PWA Prototype — Multi-Space Orchestration Command Center
+    Built: 2026-04-18 by studio-os Perplexity Space
+    Purpose: Visual prototype demonstrating the PWA direction for studio-os.
+             Shows space registry, add-space UX, bridge architecture layers,
+             cross-space composer, and orchestration event timeline.
+    Status: Prototype / reference. Not the live index.html.
+    Discussion: https://raw.githubusercontent.com/nothinginfinity/studio-os/main/discussions/2026-04-18-studio-os-pwa-build-plan.md
+  -->
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&f[]=cabinet-grotesk@500,700&display=swap" rel="stylesheet">
+  <style>
+    :root, [data-theme="light"] {
+      --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+      --text-sm: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
+      --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+      --text-lg: clamp(1.125rem, 1rem + 0.75vw, 1.5rem);
+      --text-xl: clamp(1.5rem, 1.2rem + 1.25vw, 2.25rem);
+      --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem; --space-4: 1rem; --space-5: 1.25rem; --space-6: 1.5rem; --space-8: 2rem; --space-10: 2.5rem; --space-12: 3rem; --space-16: 4rem;
+      --color-bg: #f7f6f2; --color-surface: #f9f8f5; --color-surface-2: #fbfbf9; --color-surface-offset: #f3f0ec; --color-border: #d4d1ca;
+      --color-text: #28251d; --color-text-muted: #7a7974; --color-text-faint: #bab9b4; --color-text-inverse: #f9f8f4;
+      --color-primary: #01696f; --color-primary-hover: #0c4e54; --color-primary-highlight: #cedcd8;
+      --color-success: #437a22; --color-warning: #964219; --color-error: #a12c7b; --color-blue: #006494;
+      --radius-sm: 0.5rem; --radius-md: 0.75rem; --radius-lg: 1rem; --radius-xl: 1.25rem; --radius-full: 9999px;
+      --shadow-sm: 0 1px 2px oklch(0.2 0.01 80 / 0.06); --shadow-md: 0 8px 24px oklch(0.2 0.01 80 / 0.1); --shadow-lg: 0 18px 44px oklch(0.2 0.01 80 / 0.14);
+      --transition: 180ms cubic-bezier(0.16, 1, 0.3, 1);
+      --font-body: 'Satoshi', Inter, sans-serif;
+      --font-display: 'Cabinet Grotesk', 'Satoshi', sans-serif;
+    }
+    [data-theme="dark"] {
+      --color-bg: #171614; --color-surface: #1c1b19; --color-surface-2: #201f1d; --color-surface-offset: #22211f; --color-border: #393836;
+      --color-text: #cdccca; --color-text-muted: #979692; --color-text-faint: #676662; --color-text-inverse: #171614;
+      --color-primary: #4f98a3; --color-primary-hover: #227f8b; --color-primary-highlight: #313b3b;
+      --color-success: #6daa45; --color-warning: #bb653b; --color-error: #d163a7; --color-blue: #5591c7;
+      --shadow-sm: 0 1px 2px oklch(0 0 0 / 0.2); --shadow-md: 0 8px 24px oklch(0 0 0 / 0.3); --shadow-lg: 0 18px 44px oklch(0 0 0 / 0.4);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+    body {
+      min-height: 100dvh; font-family: var(--font-body); font-size: var(--text-base); line-height: 1.5;
+      background:
+        radial-gradient(circle at top right, color-mix(in oklab, var(--color-primary) 16%, transparent) 0%, transparent 30%),
+        radial-gradient(circle at bottom left, color-mix(in oklab, var(--color-blue) 12%, transparent) 0%, transparent 28%),
+        var(--color-bg);
+      color: var(--color-text);
+    }
+    button, input, textarea, select { font: inherit; color: inherit; }
+    button { cursor: pointer; border: 0; background: none; }
+    .app {
+      display: grid; grid-template-columns: 88px 1fr; min-height: 100dvh;
+    }
+    .sidebar {
+      position: sticky; top: 0; height: 100dvh; padding: var(--space-4) var(--space-3);
+      background: color-mix(in oklab, var(--color-surface) 92%, transparent);
+      border-right: 1px solid color-mix(in oklab, var(--color-text) 10%, transparent);
+      display: flex; flex-direction: column; gap: var(--space-4);
+      backdrop-filter: blur(18px);
+    }
+    .logo {
+      width: 52px; height: 52px; border-radius: 18px; display: grid; place-items: center;
+      background: linear-gradient(135deg, var(--color-primary), color-mix(in oklab, var(--color-primary) 40%, var(--color-blue)));
+      color: white; box-shadow: var(--shadow-md); margin-inline: auto;
+    }
+    .logo svg { width: 28px; height: 28px; }
+    .nav { display: flex; flex-direction: column; gap: var(--space-2); }
+    .nav-btn {
+      width: 100%; min-height: 56px; border-radius: 18px; display: grid; place-items: center;
+      color: var(--color-text-muted); transition: all var(--transition);
+    }
+    .nav-btn.active, .nav-btn:hover { background: var(--color-surface-offset); color: var(--color-text); }
+    .main {
+      padding: var(--space-4); display: grid; gap: var(--space-4);
+      grid-template-rows: auto auto 1fr;
+    }
+    .topbar {
+      display: flex; align-items: center; justify-content: space-between; gap: var(--space-4);
+      padding: var(--space-4) var(--space-5); border-radius: var(--radius-xl);
+      background: color-mix(in oklab, var(--color-surface) 90%, transparent);
+      border: 1px solid color-mix(in oklab, var(--color-text) 10%, transparent);
+      box-shadow: var(--shadow-sm); backdrop-filter: blur(16px);
+    }
+    .headline h1 {
+      font-family: var(--font-display); font-size: var(--text-xl); line-height: 1.05; letter-spacing: -0.03em;
+      margin-bottom: var(--space-1);
+    }
+    .headline p { color: var(--color-text-muted); font-size: var(--text-sm); max-width: 60ch; }
+    .top-actions { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; }
+    .pill-btn, .primary-btn, .secondary-btn {
+      min-height: 44px; padding: 0 var(--space-4); border-radius: var(--radius-full); transition: all var(--transition);
+      display: inline-flex; align-items: center; gap: var(--space-2); white-space: nowrap;
+    }
+    .pill-btn, .secondary-btn {
+      background: var(--color-surface-offset); border: 1px solid color-mix(in oklab, var(--color-text) 10%, transparent);
+    }
+    .primary-btn {
+      background: var(--color-primary); color: white; box-shadow: var(--shadow-md);
+    }
+    .primary-btn:hover { background: var(--color-primary-hover); }
+    .overview {
+      display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-4);
+    }
+    .stat {
+      padding: var(--space-5); border-radius: var(--radius-xl); background: var(--color-surface);
+      border: 1px solid color-mix(in oklab, var(--color-text) 10%, transparent); box-shadow: var(--shadow-sm);
+    }
+    .stat-label { color: var(--color-text-muted); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: var(--space-3); }
+    .stat-value { font-size: var(--text-xl); font-family: var(--font-display); line-height: 1; margin-bottom: var(--space-2); }
+    .stat-note { color: var(--color-text-muted); font-size: var(--text-sm); }
+    .workspace {
+      display: grid; grid-template-columns: 1.45fr 1fr; gap: var(--space-4);
+      min-height: 0;
+    }
+    .stack { display: grid; gap: var(--space-4); min-height: 0; }
+    .panel {
+      background: color-mix(in oklab, var(--color-surface) 96%, transparent); border-radius: 24px; padding: var(--space-5);
+      border: 1px solid color-mix(in oklab, var(--color-text) 10%, transparent); box-shadow: var(--shadow-sm);
+    }
+    .panel-head {
+      display: flex; justify-content: space-between; align-items: start; gap: var(--space-3); margin-bottom: var(--space-4);
+    }
+    .panel-head h2 { font-size: var(--text-lg); line-height: 1.1; }
+    .panel-head p { color: var(--color-text-muted); font-size: var(--text-sm); margin-top: var(--space-1); }
+    .space-grid {
+      display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4);
+    }
+    .space-card {
+      padding: var(--space-4); border-radius: 20px; background: var(--color-surface-2);
+      border: 1px solid color-mix(in oklab, var(--color-text) 10%, transparent);
+      display: grid; gap: var(--space-3);
+    }
+    .space-top { display: flex; justify-content: space-between; gap: var(--space-3); align-items: start; }
+    .space-id {
+      width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center;
+      background: color-mix(in oklab, var(--color-primary) 22%, var(--color-surface)); color: var(--color-primary); font-weight: 700;
+    }
+    .space-name { font-weight: 700; }
+    .space-meta, .mono { color: var(--color-text-muted); font-size: var(--text-sm); }
+    .space-tags { display: flex; gap: var(--space-2); flex-wrap: wrap; }
+    .tag {
+      padding: 0.45rem 0.7rem; border-radius: var(--radius-full); font-size: var(--text-xs);
+      background: var(--color-surface-offset); color: var(--color-text-muted);
+      border: 1px solid color-mix(in oklab, var(--color-text) 8%, transparent);
+    }
+    .tag.live { color: var(--color-success); }
+    .tag.bridge { color: var(--color-blue); }
+    .add-space {
+      display: grid; gap: var(--space-4); padding: var(--space-4); border-radius: 20px;
+      border: 1px dashed color-mix(in oklab, var(--color-primary) 45%, var(--color-border)); background: color-mix(in oklab, var(--color-primary) 7%, var(--color-surface));
+    }
+    .field { display: grid; gap: var(--space-2); }
+    .field label { font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-text-muted); }
+    .field input, .field textarea, .field select {
+      width: 100%; min-height: 48px; padding: 0 var(--space-4); border-radius: 16px; background: var(--color-surface);
+      border: 1px solid color-mix(in oklab, var(--color-text) 10%, transparent); outline: none;
+    }
+    .field textarea { min-height: 110px; padding-block: var(--space-3); resize: vertical; }
+    .field input:focus, .field textarea:focus, .field select:focus { border-color: var(--color-primary); box-shadow: 0 0 0 4px color-mix(in oklab, var(--color-primary) 18%, transparent); }
+    .timeline { display: grid; gap: var(--space-3); }
+    .event {
+      padding: var(--space-4); border-radius: 18px; background: var(--color-surface-2);
+      border: 1px solid color-mix(in oklab, var(--color-text) 10%, transparent); display: grid; gap: var(--space-2);
+    }
+    .event-top, .row { display: flex; justify-content: space-between; gap: var(--space-3); align-items: center; }
+    .status {
+      display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.4rem 0.65rem; border-radius: var(--radius-full);
+      font-size: var(--text-xs); background: var(--color-surface-offset);
+    }
+    .status::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+    .status.open { color: var(--color-warning); }
+    .status.live { color: var(--color-success); }
+    .status.bridge { color: var(--color-blue); }
+    .channel-arch {
+      display: grid; gap: var(--space-3);
+    }
+    .layer {
+      padding: var(--space-4); border-radius: 18px; background: var(--color-surface-2);
+      border: 1px solid color-mix(in oklab, var(--color-text) 10%, transparent);
+    }
+    .layer strong { display: block; margin-bottom: var(--space-2); }
+    .flow {
+      padding: var(--space-3); border-radius: 16px; background: color-mix(in oklab, var(--color-primary) 8%, var(--color-surface));
+      color: var(--color-text-muted); font-size: var(--text-sm);
+    }
+    .composer {
+      display: grid; gap: var(--space-3);
+    }
+    .composer textarea { min-height: 140px; }
+    .two-col { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
+    .footer-note { color: var(--color-text-muted); font-size: var(--text-sm); }
+    .mobile-bar {
+      display: none;
+    }
+    @media (max-width: 1100px) {
+      .overview, .space-grid, .workspace, .two-col { grid-template-columns: 1fr 1fr; }
+      .workspace { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 820px) {
+      .app { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .main { padding: var(--space-3); padding-bottom: 94px; }
+      .topbar, .panel, .stat { border-radius: 20px; }
+      .overview, .space-grid, .two-col { grid-template-columns: 1fr; }
+      .mobile-bar {
+        display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--space-2);
+        position: fixed; left: var(--space-3); right: var(--space-3); bottom: var(--space-3); z-index: 10;
+        padding: var(--space-2); border-radius: 22px; background: color-mix(in oklab, var(--color-surface) 92%, transparent);
+        border: 1px solid color-mix(in oklab, var(--color-text) 10%, transparent); backdrop-filter: blur(20px); box-shadow: var(--shadow-lg);
+      }
+      .mobile-bar button { min-height: 52px; border-radius: 16px; color: var(--color-text-muted); }
+      .mobile-bar button.active { background: var(--color-surface-offset); color: var(--color-text); }
+      .topbar { align-items: start; flex-direction: column; }
+      .top-actions { width: 100%; }
+      .top-actions > * { flex: 1 1 auto; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" aria-label="Primary navigation">
+      <div class="logo" aria-label="Studio OS logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M4 18V6l8-3 8 3v12l-8 3-8-3Z"></path>
+          <path d="M12 9.5 7 7.5"></path>
+          <path d="M12 9.5l5-2"></path>
+          <path d="M12 9.5V21"></path>
+        </svg>
+      </div>
+      <nav class="nav">
+        <button class="nav-btn active" aria-label="Overview">⌂</button>
+        <button class="nav-btn" aria-label="Spaces">◫</button>
+        <button class="nav-btn" aria-label="Bridge">⇄</button>
+        <button class="nav-btn" aria-label="Inbox">✉</button>
+        <button class="nav-btn" aria-label="Settings">⚙</button>
+      </nav>
+      <button class="pill-btn" data-theme-toggle aria-label="Toggle theme">◐</button>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="headline">
+          <h1>Studio OS — multi-space command layer</h1>
+          <p>A mobile-first PWA that registers Perplexity Spaces, routes messages through GitHub-native inbox/outbox channels, and evolves into live webhook-backed chat bridges.</p>
+        </div>
+        <div class="top-actions">
+          <button class="pill-btn">Repo-backed sync</button>
+          <button class="pill-btn">PWA-ready shell</button>
+          <button class="primary-btn">Add new space</button>
+        </div>
+      </header>
+
+      <section class="overview" aria-label="System overview">
+        <article class="stat">
+          <div class="stat-label">Registered spaces</div>
+          <div class="stat-value">4</div>
+          <div class="stat-note">Registry-driven discovery with manual add-space flow.</div>
+        </article>
+        <article class="stat">
+          <div class="stat-label">Bridge layers</div>
+          <div class="stat-value">3</div>
+          <div class="stat-note">GitHub context, action bridge, and protocol routing.</div>
+        </article>
+        <article class="stat">
+          <div class="stat-label">Channel modes</div>
+          <div class="stat-value">2</div>
+          <div class="stat-note">One-way alerts now, two-way reply tools next.</div>
+        </article>
+        <article class="stat">
+          <div class="stat-label">Mobile status</div>
+          <div class="stat-value">PWA</div>
+          <div class="stat-note">Manifest + service worker already matching app-shell direction.</div>
+        </article>
+      </section>
+
+      <section class="workspace">
+        <div class="stack">
+          <article class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Space registry + add-space UX</h2>
+                <p>Paste a Perplexity Space link, assign a local alias, bind it to repo inbox/outbox files. Registry-driven and extensible.</p>
+              </div>
+              <button class="secondary-btn">Import registry.json</button>
+            </div>
+            <div class="space-grid">
+              <div class="space-card">
+                <div class="space-top">
+                  <div class="space-id">SO</div>
+                  <span class="status live">Primary</span>
+                </div>
+                <div>
+                  <div class="space-name">studio-os</div>
+                  <div class="space-meta">spaces/studio-os/inbox.md · outbox.md</div>
+                </div>
+                <div class="space-tags">
+                  <span class="tag live">Bridge executor</span>
+                  <span class="tag bridge">GitHub native</span>
+                </div>
+              </div>
+              <div class="space-card">
+                <div class="space-top">
+                  <div class="space-id">PS</div>
+                  <span class="status bridge">Linked</span>
+                </div>
+                <div>
+                  <div class="space-name">phone-studio</div>
+                  <div class="space-meta">Manual routed messaging already defined.</div>
+                </div>
+                <div class="space-tags">
+                  <span class="tag">Mobile companion</span>
+                  <span class="tag bridge">Cross-space handoff</span>
+                </div>
+              </div>
+              <div class="add-space">
+                <div>
+                  <div class="space-name">Add a new Perplexity Space</div>
+                  <div class="space-meta">Paste the Space URL, choose the local slug, then create inbox/outbox bindings and save to the registry.</div>
+                </div>
+                <div class="field">
+                  <label for="space-name">Space label</label>
+                  <input id="space-name" placeholder="ex. research-lab" />
+                </div>
+                <div class="field">
+                  <label for="space-url">Perplexity Space URL</label>
+                  <input id="space-url" placeholder="https://www.perplexity.ai/spaces/..." />
+                </div>
+                <div class="two-col">
+                  <div class="field">
+                    <label for="space-slug">Local slug</label>
+                    <input id="space-slug" placeholder="research-lab" />
+                  </div>
+                  <div class="field">
+                    <label for="route-mode">Routing mode</label>
+                    <select id="route-mode">
+                      <option>Layer 1 only</option>
+                      <option>email-for-ai bridge</option>
+                      <option>cairn → email-for-ai</option>
+                    </select>
+                  </div>
+                </div>
+                <button class="primary-btn">Create space binding</button>
+              </div>
+              <div class="space-card">
+                <div class="space-top">
+                  <div class="space-id">WB</div>
+                  <span class="status open">Planned</span>
+                </div>
+                <div>
+                  <div class="space-name">Webhook bridge channel</div>
+                  <div class="space-meta">Reserved for live updates and two-way reply tools.</div>
+                </div>
+                <div class="space-tags">
+                  <span class="tag">SSE / webhook</span>
+                  <span class="tag">Chat relay</span>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Channel architecture</h2>
+                <p>The repo is the durable ledger. Webhooks or a local bridge add faster chat-like updates on top.</p>
+              </div>
+              <button class="secondary-btn">Open bridge spec</button>
+            </div>
+            <div class="channel-arch">
+              <div class="layer">
+                <strong>Layer 1 — GitHub as durable mailbox</strong>
+                <div class="mono">spaces/&lt;slug&gt;/inbox.md · outbox.md · registry.json</div>
+              </div>
+              <div class="flow">One-way channel: append-only messages, alerts, prompts, decisions, or structured requests any Space can read.</div>
+              <div class="layer">
+                <strong>Layer 2 — Action bridge</strong>
+                <div class="mono">email-for-ai / MCP / local runner / GitHub tool execution</div>
+              </div>
+              <div class="flow">Two-way channel: expose a reply tool so a routed agent can answer back into the originating inbox — email/chat for AI.</div>
+              <div class="layer">
+                <strong>Layer 3 — Live experience</strong>
+                <div class="mono">Webhook receiver + SSE/WebSocket fanout + permission relay</div>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <div class="stack">
+          <article class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Recent orchestration events</h2>
+                <p>What the mobile command center shows at a glance.</p>
+              </div>
+              <button class="secondary-btn">View all</button>
+            </div>
+            <div class="timeline">
+              <div class="event">
+                <div class="event-top">
+                  <strong>phone-studio → studio-os</strong>
+                  <span class="status live">Delivered</span>
+                </div>
+                <div>Inbox append completed through the repo mailbox path.</div>
+                <div class="mono">2 min ago · Route: Layer 1</div>
+              </div>
+              <div class="event">
+                <div class="event-top">
+                  <strong>Bridge scan</strong>
+                  <span class="status bridge">Watching</span>
+                </div>
+                <div>Studio OS monitors Route flags and escalates to email-for-ai or protocol handlers.</div>
+                <div class="mono">Live daemon candidate</div>
+              </div>
+              <div class="event">
+                <div class="event-top">
+                  <strong>Webhook chat relay</strong>
+                  <span class="status open">Prototype</span>
+                </div>
+                <div>GitHub as source-of-truth, SSE mirrored updates for real-time feel.</div>
+                <div class="mono">Recommended next build</div>
+              </div>
+            </div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <div>
+                <h2>Compose cross-space instruction</h2>
+                <p>High-level orchestration surface for prompts, tasks, and bridge requests.</p>
+              </div>
+            </div>
+            <div class="composer">
+              <div class="two-col">
+                <div class="field">
+                  <label for="from-space">From</label>
+                  <select id="from-space">
+                    <option>studio-os</option>
+                    <option>phone-studio</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="to-space">To</label>
+                  <select id="to-space">
+                    <option>phone-studio</option>
+                    <option>studio-os</option>
+                    <option>new linked space…</option>
+                  </select>
+                </div>
+              </div>
+              <div class="field">
+                <label for="message-type">Type</label>
+                <select id="message-type">
+                  <option>request</option>
+                  <option>status</option>
+                  <option>decision</option>
+                  <option>bridge-action</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="message-body">Message</label>
+                <textarea id="message-body" placeholder="Write a high-level instruction to another space, or create a routed action request that Studio OS can execute."></textarea>
+              </div>
+              <div class="two-col">
+                <button class="secondary-btn">Save draft</button>
+                <button class="primary-btn">Append to outbox</button>
+              </div>
+              <div class="footer-note">Keep the canonical message in markdown, then mirror into a live activity stream when webhook transport is available.</div>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <nav class="mobile-bar" aria-label="Mobile navigation">
+    <button class="active" aria-label="Overview">⌂</button>
+    <button aria-label="Spaces">◫</button>
+    <button aria-label="Bridge">⇄</button>
+    <button aria-label="Inbox">✉</button>
+    <button data-theme-toggle aria-label="Toggle theme">◐</button>
+  </nav>
+
+  <script>
+    (() => {
+      const toggles = document.querySelectorAll('[data-theme-toggle]');
+      const r = document.documentElement;
+      let theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      r.setAttribute('data-theme', theme);
+      const render = () => toggles.forEach(btn => btn.textContent = theme === 'dark' ? '\u25d0' : '\u25d1');
+      render();
+      toggles.forEach(btn => btn.addEventListener('click', () => {
+        theme = theme === 'dark' ? 'light' : 'dark';
+        r.setAttribute('data-theme', theme);
+        render();
+      }));
+    })();
+  </script>
+</body>
+</html>
