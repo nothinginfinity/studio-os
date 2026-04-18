@@ -205,15 +205,131 @@ All future PWA work should build on this direction without abandoning the mobile
 
 ---
 
+## Conversation Linking Strategy
+
+> Added 2026-04-18. This section covers how individual conversations — within a Space and across Spaces — are linked together, and how Studio OS becomes the command layer for prompting them.
+
+### The Raw URL Context Protocol
+
+The single most effective thing any Perplexity Space can do today to stay in sync is to paste the raw GitHub URL to this document at the start of every new conversation. This gives each conversation:
+
+- The full architecture context without re-explaining it.
+- The current build order and priorities.
+- The registry schema, envelope format, and bridge rules.
+- Its own role in the system.
+
+**The canonical raw URL for this document is:**
+```
+https://raw.githubusercontent.com/nothinginfinity/studio-os/main/discussions/2026-04-18-studio-os-pwa-build-plan.md
+```
+
+Every Space should store this URL in its system prompt or instructions so it is available to drop into any new conversation without searching. Studio OS should also display it prominently in the PWA so the user can copy it with one tap.
+
+**This URL is the shared memory layer for all conversations in all Spaces until a programmatic API makes it automatic.**
+
+### Why Perplexity Doesn't Support Direct Conversation Linking (Yet)
+
+Perplexity does not currently expose a public API for reading or writing to individual conversations or threads programmatically. Each thread has a unique URL (the `perplexity.ai/search/...` format) but there is no webhook, callback, or subscribe mechanism that lets Studio OS inject into or read from a thread without the user manually opening it.
+
+This means direct conversation-to-conversation API linking is not yet possible within Perplexity's platform. The workaround — which is architecturally superior in terms of durability and auditability — is the GitHub mailbox model already in place.
+
+### How Conversation Linking Works Today (The Manual Bridge)
+
+The following table maps desired conversation-linking goals to their current practical implementation:
+
+| Goal | Current implementation |
+|---|---|
+| Link conversation A in Space 1 to conversation B in Space 2 | Both conversations read the same raw GitHub doc. They share state without a direct API connection. |
+| Pass a decision from one conversation to another | Conversation A appends to its `outbox.md`. Conversation B reads its `inbox.md` at session start. |
+| Resume context mid-build across conversations | Drop the thread URL + a summary into the Space's memory folder or into this discussion. The next conversation reads it. |
+| Prompt a specific conversation from Studio OS | Studio OS writes a structured message to the target Space's `inbox.md`. The user opens a new thread in that Space and pastes the latest inbox entry as the first message. |
+| Acknowledge a prompt and reply | The receiving conversation appends a reply to its `outbox.md` with the originating Space's inbox as the `To:` field. Studio OS routes it back. |
+
+### The Conversation Thread Registry
+
+To make individual conversations trackable — not just Spaces — the message envelope format should be extended with a `ConversationURL` field when known:
+
+```markdown
+---
+**From:** studio-os
+**To:** phone-studio
+**Type:** request
+**Status:** open
+**Route:** layer-1
+**Thread:** build-pwa-001
+**ConversationURL:** https://www.perplexity.ai/search/[thread-id]
+**Created:** 2026-04-18T08:42:00-07:00
+---
+```
+
+This allows Studio OS to display a "Open this conversation" deep link in the PWA, so the user can jump directly to the relevant thread in one tap rather than searching for it. The conversation URL becomes part of the durable record even though Perplexity cannot be programmatically driven to open it.
+
+### The Studio OS Prompt Launcher (Priority 7)
+
+Building on Priority 6, the PWA should include a **Prompt Launcher** panel — a dedicated view where the user can:
+
+1. Select a target Space from the registry.
+2. Compose a message or select a pre-built prompt template.
+3. Tap "Send" — which commits the message to the target Space's `inbox.md` via the GitHub tool.
+4. The PWA displays a formatted prompt block the user can copy with one tap.
+5. The user opens a new conversation in the target Space and pastes the block as the first message.
+6. Optionally, after the conversation runs, the user pastes the thread URL back into the PWA to register it in the conversation log.
+
+This reduces the friction of cross-space prompting to: **compose → one tap copy → paste → done**.
+
+The prompt block format should be:
+```
+[Read this first]: https://raw.githubusercontent.com/nothinginfinity/studio-os/main/discussions/2026-04-18-studio-os-pwa-build-plan.md
+
+[Inbox message from studio-os]:
+<the full envelope message body>
+```
+
+### Extending to Claude, GPT-4o, and Other LLMs
+
+The GitHub mailbox model is intentionally LLM-agnostic. Any AI tool that can read a URL and write a commit can participate as a Space. The difference between Perplexity and other tools is only in the programmatic access level:
+
+| Tool | Programmatic access | Integration mode |
+|---|---|---|
+| Perplexity Spaces | No thread API today | Manual raw URL context drop + inbox/outbox mailbox |
+| Claude (Anthropic API) | Full API — send prompt, receive response | Bridge watcher can call API directly, no manual paste needed |
+| GPT-4o (OpenAI API) | Full API | Same as Claude — fully automatable via bridge watcher |
+| Claude Projects | No API, similar to Perplexity Spaces | Same manual model as Perplexity |
+| Cursor / Windsurf | Reads repo files natively | Layer 1 participant without any extra setup |
+| Any MCP client | Full tool access | Layer 2 participant via email-for-ai |
+
+**The architecture does not need to change for any of these tools.** The registry just gets a new `toolType` field and the bridge watcher gets new route handlers for API-accessible tools. When Perplexity eventually exposes a thread API, it becomes another route handler — the rest of the system stays the same.
+
+### Recommended Addition to Registry Schema
+
+To support multi-LLM conversation linking, add the following optional fields to the registry entry:
+
+```json
+{
+  "toolType": "perplexity-space | claude-api | openai-api | cursor | mcp-client",
+  "apiEndpoint": "https://api.anthropic.com/v1/messages",
+  "apiKeyRef": "ANTHROPIC_API_KEY",
+  "autoReply": false,
+  "conversationLog": "spaces/<slug>/conversations.md"
+}
+```
+
+When `autoReply` is `true` and `toolType` is API-accessible, the bridge watcher sends the inbox message to the API automatically and writes the response back to the originating inbox. When `autoReply` is `false` (as for Perplexity Spaces today), it generates the copy-paste prompt block instead.
+
+---
+
 ## Open Questions
 
 1. Should the bridge watcher run as a GitHub Action (runs on push) or as a persistent local daemon on the Mac Mini?
 2. Should the PWA use the GitHub API directly (via a PAT stored client-side) or route all writes through a thin server?
 3. What is the right SSE transport for Priority 5 — a self-hosted webhook receiver, a GitHub App, or a third-party service like Hookdeck?
 4. When a new Space is added via the PWA, should it automatically get a system prompt template dropped into its `spaces/<slug>/` folder?
+5. Should the Prompt Launcher store pre-built prompt templates in `_os/prompts/` so all Spaces can reference them?
+6. When a conversation URL is registered in an envelope, should the PWA show a live "open thread" deep link? This would require maintaining a `conversations.md` log per Space.
+7. As API-accessible tools (Claude, GPT-4o) are added to the registry, should their responses be stored in the repo as first-class messages, or kept in a separate `responses/` folder to keep `inbox.md` clean?
 
 These questions are deliberately left open for cross-space discussion. Any Space can append an answer to this document or to `spaces/studio-os/inbox.md`.
 
 ---
 
-*This document is the shared architecture brief for the Studio OS multi-space orchestration build. All Perplexity Spaces involved in this project should read it at session start. Last updated: 2026-04-18 by studio-os Space.*
+*This document is the shared architecture brief for the Studio OS multi-space orchestration build. All Perplexity Spaces involved in this project should read it at session start. Last updated: 2026-04-18 (conversation linking strategy added) by studio-os Space.*
