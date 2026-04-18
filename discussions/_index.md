@@ -21,4 +21,9 @@
 
 ## Index
 
-_No resolved discussions yet. First entries will appear here as GitHub Discussions are resolved._
+### [2026-04-18] Studio OS PWA — Multi-Space Orchestration Build Plan
+**Category:** Cross-Repo Architecture / Build Roadmap  
+**Resolved:** In Progress  
+**Summary:** Studio OS is becoming a mobile-first PWA that bridges multiple Perplexity Spaces using GitHub as a durable mailbox layer and a live SSE/webhook layer for real-time feel. The discussion defines the 6-priority build order, the normalized registry schema, the message envelope format, channel modes (one-way and two-way), the add-space UX flow, and the role each Space should play. All Spaces working on this build should read this document at session start before doing any work.  
+**Affects:** `nothinginfinity/studio-os`, `nothinginfinity/email-for-ai`, all linked Perplexity Spaces  
+**Discussion file:** [discussions/2026-04-18-studio-os-pwa-build-plan.md](discussions/2026-04-18-studio-os-pwa-build-plan.md)
