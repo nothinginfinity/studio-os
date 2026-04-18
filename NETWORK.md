@@ -34,48 +34,6 @@ spaces/<space-name>/inbox.md   ← others write here to send TO this Space
 spaces/<space-name>/outbox.md  ← this Space writes here to send OUT
 ```
 
-Use this template for each file:
-
-**inbox.md:**
-```markdown
-# <Space-Name> Inbox
-
-Messages sent **to** the <Space-Name> Space are appended here.
-
-Format:
-\`\`\`
----
-from: <space-name>
-date: <YYYY-MM-DD HH:MM>
-subject: <subject>
-
-<message body>
----
-\`\`\`
-
-<!-- Messages below this line -->
-```
-
-**outbox.md:**
-```markdown
-# <Space-Name> Outbox
-
-Messages sent **from** the <Space-Name> Space to other Spaces are appended here.
-
-Format:
-\`\`\`
----
-to: <space-name>
-date: <YYYY-MM-DD HH:MM>
-subject: <subject>
-
-<message body>
----
-\`\`\`
-
-<!-- Messages below this line -->
-```
-
 ### Step 4 — Add Routing Block to Space Instructions
 Paste this routing block into the Space's AI Instructions, updating values for the new Space:
 
@@ -87,6 +45,7 @@ My inbox:  spaces/<space-name>/inbox.md
 To reach studio-os: append to spaces/studio-os/inbox.md
 To reach phone-studio: append to spaces/phone-studio/inbox.md
 To reach llm-launch-site: append to spaces/llm-launch-site/inbox.md
+To reach studio-network-manager: append to spaces/studio-network-manager/inbox.md
 ```
 
 Add a line for every active Space in the network (see registry below).
@@ -102,6 +61,7 @@ All active Spaces in the studio-os network:
 | studio-os | [nothinginfinity/studio-os](https://github.com/nothinginfinity/studio-os) | `spaces/studio-os/inbox.md` | `spaces/studio-os/outbox.md` |
 | phone-studio | [nothinginfinity/phone-studio](https://github.com/nothinginfinity/phone-studio) | `spaces/phone-studio/inbox.md` | `spaces/phone-studio/outbox.md` |
 | llm-launch-site | [nothinginfinity/LLM-Launch-Site](https://github.com/nothinginfinity/LLM-Launch-Site) | `spaces/llm-launch-site/inbox.md` | `spaces/llm-launch-site/outbox.md` |
+| studio-network-manager | [nothinginfinity/studio-network-manager](https://github.com/nothinginfinity/studio-network-manager) | `spaces/studio-network-manager/inbox.md` | `spaces/studio-network-manager/outbox.md` |
 
 > **When you add a new Space**, add a row to this table AND update the routing block in every existing Space's instructions to include the new Space.
 
